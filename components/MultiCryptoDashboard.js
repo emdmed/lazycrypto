@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
-import CryptoData from './CryptoData.js';
+import CryptoData from './CryptoData/CryptoData.js';
 
 const availableCryptos = [
   { label: 'Bitcoin (BTC)', value: 'bitcoin', ticker: 'BTC' },
