@@ -12,7 +12,7 @@ const clearTerminal = () => {
 const App = () => {
   // Clear terminal on app start
   useEffect(() => {
-    clearTerminal();
+    //clearTerminal();
   }, []);
 
   const handleBack = () => {
