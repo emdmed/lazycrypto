@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createElement } from 'react';
 import { Box, Text, useInput } from 'ink';
 import SelectInput from 'ink-select-input';
 import Spinner from 'ink-spinner';
 import axios from 'axios';
+
+const REFETCH_INTERVAL = 120000
 
 // Mapping between display info, tickers, and API identifiers
 const cryptoOptions = [
@@ -129,19 +131,15 @@ const CryptoData = ({ crypto: initialCrypto, ticker: initialTicker, onBack }) =>
     fetchData();
     
     // Refresh data every 30 seconds
-    const interval = setInterval(fetchData, 30000);
+    const interval = setInterval(fetchData, REFETCH_INTERVAL);
     
     return () => clearInterval(interval);
   }, [currentCrypto]);
 
   const formatPrice = (price) => {
-    if (!price) return '$0.00';
-    if (price >= 1000) {
-      return `$${(price / 1000).toFixed(1)}K`;
-    } else if (price >= 1) {
-      return `$${price.toFixed(2)}`;
-    }
-    return `$${price.toFixed(4)}`;
+    return `$${price.toLocaleString("ES", {
+      maximumFractionDigits: 2
+    })}`;
   };
 
   const formatPercentage = (delta) => {
@@ -224,39 +222,34 @@ const CryptoData = ({ crypto: initialCrypto, ticker: initialTicker, onBack }) =>
     minWidth: 60,
     borderStyle: "round", 
     borderColor: "cyan", 
-    padding: 1,
+    padding: 0,
     flexDirection: "column"
   },
     // Row 1: Name, Symbol, Rank, and Price
     React.createElement(Box, { justifyContent: "space-between" },
       React.createElement(Box, { flexDirection: "row" },
         React.createElement(Text, { bold: true, color: "cyan" }, data.name || 'Unknown'),
-        React.createElement(Text, { color: "gray", marginLeft: 1 }, `(${displayTicker})`)
+        React.createElement(Text, { color: "gray", marginLeft: 1 }, `(${displayTicker})`),
+        React.createElement(Box, { flexDirection: "row", marginLeft: 1 },
+          React.createElement(Text, { bold: true, color: "yellow" }, formatPrice(data.rate))
+        ),
+        React.createElement(Box, { flexDirection: "row", marginLeft: 2 },
+          React.createElement(Text, { dimColor: true, marginLeft: 1 }, "24h: "),
+          formatPercentage(data.delta?.day) ,
+        ),
+        React.createElement(Box, {flexDirection: "row", marginLeft: 2}, 
+          React.createElement(Text, { dimColor: true}, "7d: "),
+          formatPercentage(data.delta?.week)
+        )
+        
       ),
-      React.createElement(Box, { flexDirection: "row" },
-        React.createElement(Text, { color: "gray", marginRight: 1 }, `#${data.rank || 'N/A'}`),
-        React.createElement(Text, { bold: true, color: "yellow" }, formatPrice(data.rate))
-      )
+
     ),
     
     // Row 2: Changes and Market Data
     React.createElement(Box, { justifyContent: "space-between", marginTop: 1 },
       React.createElement(Box, { flexDirection: "row" },
-        React.createElement(Text, { dimColor: true }, "24h: "),
-        formatPercentage(data.delta?.day),
-        React.createElement(Text, { dimColor: true, marginLeft: 2 }, "7d: "),
-        formatPercentage(data.delta?.week)
-      ),
-      React.createElement(Box, { flexDirection: "row" },
-        React.createElement(Text, { dimColor: true }, `MC: ${formatMarketCap(data.cap)}`),
-        React.createElement(Text, { dimColor: true, marginLeft: 2 }, `Vol: ${formatMarketCap(data.volume)}`),
-        React.createElement(Text, { 
-          dimColor: true, 
-          color: data.rate === data.allTimeHighUSD ? "green" : "gray",
-          marginLeft: 2
-        }, 
-          data.rate === data.allTimeHighUSD ? "ATH!" : "ATH"
-        )
+        
       )
     )
   );

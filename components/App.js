@@ -1,15 +1,8 @@
 import dotenv from "dotenv"
 dotenv.config();
-import React, { useState, useEffect } from 'react';
-import { Box, Text } from 'ink';
-import SelectInput from 'ink-select-input';
+import React, { useEffect } from 'react';
+import { Box } from 'ink';
 import MultiCryptoDashboard from './MultiCryptoDashboard.js';
-
-const modeOptions = [
-  { label: '📊 Multi-Crypto Dashboard', value: 'multi' },
-  { label: '🚀 Single Crypto View', value: 'single' },
-  { label: '❌ Exit', value: 'exit' }
-];
 
 // Function to clear terminal
 const clearTerminal = () => {
@@ -17,38 +10,19 @@ const clearTerminal = () => {
 };
 
 const App = () => {
-  const [currentMode, setCurrentMode] = useState('multi'); // Start with multi-crypto dashboard
-  const [showModeSelection, setShowModeSelection] = useState(false);
-
   // Clear terminal on app start
   useEffect(() => {
     clearTerminal();
   }, []);
 
-  const handleModeSelect = (item) => {
-    if (item.value === 'exit') {
-      process.exit(0);
-    }
-    setCurrentMode(item.value);
-    setShowModeSelection(false);
-  };
-
   const handleBack = () => {
-    setShowModeSelection(true);
+    // Since we only have multi-crypto mode, back should exit
+    process.exit(0);
   };
 
+  // Always render MultiCryptoDashboard as the only mode
   return React.createElement(Box, { flexDirection: "column", padding: 1 },
-    showModeSelection ? 
-      React.createElement(Box, { flexDirection: "column" },
-        React.createElement(Box, { marginBottom: 1 },
-          React.createElement(Text, { bold: true, color: "cyan" }, "🚀 LazyCrypto - Select Mode")
-        ),
-        React.createElement(Box, { marginBottom: 1 },
-          React.createElement(Text, null, "Choose how you want to view cryptocurrency data:")
-        ),
-        React.createElement(SelectInput, { items: modeOptions, onSelect: handleModeSelect })
-      ) :
-      React.createElement(MultiCryptoDashboard, { onBack: handleBack })
+    React.createElement(MultiCryptoDashboard, { onBack: handleBack })
   );
 };
 
