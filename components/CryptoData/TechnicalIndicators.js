@@ -1,83 +1,118 @@
-// components/TechnicalIndicators.js
-import React, { createElement } from 'react';
-import { Box, Text } from 'ink';
-import { 
-  formatIndicatorValue, 
-  getIndicatorColor, 
+import React, { createElement } from "react";
+import { Box, Text } from "ink";
+import {
+  formatIndicatorValue,
+  getIndicatorColor,
   getMACDValue,
-  getLatestValue, 
-  getPrevValue
-} from '../../utils/indicatorUtils.js';
-import RowVisualizer from './visualizations/rowVisualizer.js';
+  getLatestValue,
+  getPrevValue,
+} from "../../utils/indicatorUtils.js";
+import RowVisualizer from "./visualizations/rowVisualizer.js";
+import BollingerRowVisualizer from "./visualizations/BollingerBandsVisualizer.js";
 
-const TechnicalIndicators = ({ indicators }) => {
-  return createElement(Box, {
-    width: '100%',
-    minWidth: 60,
-    padding: 0,
-    flexDirection: "column",
-    marginTop: 1
-  },
-    
-    // RSI and MACD
-    createElement(Box, { flexDirection: "row", justifyContent: "space-between" },
-      createElement(Box, { flexDirection: "row" },
-        createElement(Text, { dimColor: true }, "RSI(20)"),
-        createElement(Box, {marginLeft: 1, marginRight: 1}, createElement(RowVisualizer, {value: getLatestValue(indicators.rsi), prevValue: getPrevValue(indicators.rsi)})),
-        createElement(Text, {
-          color: indicators.rsi ? getIndicatorColor('rsi', getLatestValue(indicators.rsi)) : 'gray'
-        }, formatIndicatorValue(indicators.rsi))
+const TechnicalIndicators = ({
+  indicators,
+  data,
+  historicalData,
+  prevPrice,
+}) => {
+  return createElement(
+    Box,
+    {
+      width: "100%",
+      minWidth: 60,
+      padding: 0,
+      flexDirection: "column",
+      marginTop: 1,
+    },
+
+    createElement(
+      Box,
+      { flexDirection: "row", justifyContent: "space-between" },
+      createElement(
+        Box,
+        { flexDirection: "row" },
+        createElement(Text, { dimColor: true }, "RSI"),
+        createElement(
+          Box,
+          { marginLeft: 1, marginRight: 1 },
+          createElement(RowVisualizer, {
+            value: getLatestValue(indicators.rsi),
+            prevValue: getPrevValue(indicators.rsi),
+          }),
+        ),
+        createElement(
+          Text,
+          {
+            color: indicators.rsi
+              ? getIndicatorColor("rsi", getLatestValue(indicators.rsi))
+              : "gray",
+          },
+          formatIndicatorValue(indicators.rsi),
+        ),
       ),
-      createElement(Box, { flexDirection: "row" },
-        createElement(Text, { dimColor: true }, "MACD: "),
-        createElement(Text, {
-          color: indicators.macd ? getIndicatorColor('macd', getMACDValue(indicators.macd.macdLine)) : 'gray'
-        }, getMACDValue(indicators.macd.macdLine)?.toFixed(2) || 'N/A'),
-      ),
-      createElement(Box, { flexDirection: "row" },
-        createElement(Text, { dimColor: true }, "Signal: "),
-        createElement(Text, {
-          color: indicators.macd ? getIndicatorColor('signal', getMACDValue(indicators.macd.signalLine)) : 'gray'
-        }, getMACDValue(indicators.macd.signalLine)?.toFixed(2) || 'N/A'),
-      )
     ),
-    
+    createElement(
+      Box,
+      { flexDirection: "row" },
+      createElement(OtherIndicators, {
+        indicators,
+        data,
+        prevPrice: historicalData[historicalData.length - 2][1],
+      }),
+    ),
     //createElement(MovingAverages, { indicators }),
-    
-    //createElement(OtherIndicators, { indicators })
   );
 };
 
 const MovingAverages = ({ indicators }) => {
-  return createElement(Box, { flexDirection: "column", marginTop: 1 },
-    createElement(Text, { dimColor: true, marginBottom: 1 }, "Moving Averages:"),
-    createElement(Box, { flexDirection: "row", justifyContent: "space-between" },
-      createElement(Text, { color: "cyan" }, `EMA9: ${formatIndicatorValue(indicators.ema9)}`),
-      createElement(Text, { color: "cyan" }, `EMA21: ${formatIndicatorValue(indicators.ema21)}`),
-      createElement(Text, { color: "cyan" }, `EMA50: ${formatIndicatorValue(indicators.ema50)}`)
+  return createElement(
+    Box,
+    { flexDirection: "column", marginTop: 1 },
+    createElement(
+      Box,
+      { flexDirection: "row", justifyContent: "space-between" },
+      createElement(
+        Text,
+        { color: "cyan" },
+        `EMA9: ${formatIndicatorValue(indicators.ema9)}`,
+      ),
+      createElement(
+        Text,
+        { color: "cyan" },
+        `EMA21: ${formatIndicatorValue(indicators.ema21)}`,
+      ),
+      createElement(
+        Text,
+        { color: "cyan" },
+        `EMA50: ${formatIndicatorValue(indicators.ema50)}`,
+      ),
     ),
-    createElement(Box, { flexDirection: "row", justifyContent: "space-between", marginTop: 1 },
-      createElement(Text, { color: "magenta" }, `SMA Fast: ${formatIndicatorValue(indicators.smaFast)}`),
-      createElement(Text, { color: "magenta" }, `SMA Slow: ${formatIndicatorValue(indicators.smaSlow)}`),
-      createElement(Text, { color: "magenta" }, `SMA200: ${formatIndicatorValue(indicators.sma200)}`)
-    )
   );
 };
 
-const OtherIndicators = ({ indicators }) => {
-  return createElement(Box, { flexDirection: "row", justifyContent: "space-between", marginTop: 1 },
-    createElement(Box, { flexDirection: "column" },
-      createElement(Text, { dimColor: true }, "Bollinger Bands:"),
-      createElement(Text, { color: "yellow" }, `Upper: ${formatIndicatorValue(indicators.bb?.upper)}`),
-      createElement(Text, { color: "yellow" }, `Middle: ${formatIndicatorValue(indicators.bb?.middle)}`),
-      createElement(Text, { color: "yellow" }, `Lower: ${formatIndicatorValue(indicators.bb?.lower)}`)
+const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
+  const price = data.rate;
+
+  return createElement(
+    Box,
+    {
+      flexDirection: "column",
+      marginTop: 1,
+    },
+    createElement(
+      Box,
+      { flexDirection: "column" },
+      indicators.bb &&
+        createElement(BollingerRowVisualizer, {
+          price: price,
+          prevPrice: prevPrice,
+          upperBand: getLatestValue(indicators.bb.upper),
+          middleBand: getLatestValue(indicators.bb.middle),
+          lowerBand: getLatestValue(indicators.bb.lower),
+          width: 20,
+        }),
     ),
-    createElement(Box, { flexDirection: "column" },
-      createElement(Text, { dimColor: true }, "Other:"),
-      createElement(Text, { color: "white" }, `ATR: ${formatIndicatorValue(indicators.atr)}`),
-      createElement(Text, { color: "white" }, `Min(20): ${formatIndicatorValue(indicators.mmin)}`),
-      createElement(Text, { color: "white" }, `Max(20): ${formatIndicatorValue(indicators.mmax)}`)
-    )
   );
 };
 

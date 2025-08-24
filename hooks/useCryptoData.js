@@ -1,10 +1,9 @@
-// hooks/useCryptoData.js
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { calculateIndicators } from '../utils/indicators/indicators.js';
 import { cryptoOptions } from '../constants/cryptoOptions.js';
 
-const REFETCH_INTERVAL = 120000;
+const REFETCH_INTERVAL = 15 * 60 * 1000;
 
 export const useCryptoData = (currentCrypto, apiKey) => {
   const [data, setData] = useState(null);
@@ -60,22 +59,19 @@ export const useCryptoData = (currentCrypto, apiKey) => {
         return;
       }
       
-      // Process the data points and convert to OHLCV format for indicators
       const processedData = historyArray.map(point => [
-        point.date,           // timestamp
-        point.rate,           // open (using rate)
-        point.rate,           // high (using rate)
-        point.rate,           // low (using rate)  
-        point.rate,           // close (using rate)
-        point.volume || 0     // volume
+        point.date,           
+        point.rate,           
+        point.rate,           
+        point.rate,           
+        point.rate,          
+        point.volume || 0    
       ]);
       
-      // Sort by timestamp
       const sortedData = processedData.sort((a, b) => b[0] - a[0]);
       
       setHistoricalData(sortedData);
       
-      // Calculate indicators if we have enough data
       if (sortedData.length >= 100) {
         try {
           const calculatedIndicators = calculateIndicators(sortedData);
@@ -152,7 +148,6 @@ export const useCryptoData = (currentCrypto, apiKey) => {
     return () => clearInterval(interval);
   }, [currentCrypto, apiKey]);
 
-  // Reset state when crypto changes
   useEffect(() => {
     setData(null);
     setLoading(true);

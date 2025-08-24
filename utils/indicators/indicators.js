@@ -14,19 +14,14 @@ export const calculateIndicators = (historicalData) => {
         const rsi = indicators.rsi(closes, { period: 20 });
         
         // Bollinger Bands
-        const bb = indicators.bb(closes, { period: 40 });
+        const bb = indicators.bb(closes, { period: 20 });
         
         // Exponential Moving Averages
         const ema9 = indicators.ema(closes, { period: 9 });
         const ema21 = indicators.ema(closes, { period: 21 });
         const ema50 = indicators.ema(closes, { period: 50 });
         const ema100 = indicators.ema(closes, { period: 100 });
-        const ema200 = indicators.ema(closes, { period: 100 });
         
-        // Simple Moving Averages
-        const sma200 = indicators.sma(closes, { period: 100 });
-        const smaFast = indicators.sma(closes, { period: 21 });  // 50 in original, using 21 for more responsive
-        const smaSlow = indicators.sma(closes, { period: 100 }); // 200 in original, using 100
         
         // MACD - Moving Average Convergence Divergence
         const macd = indicators.macd(closes, { fast: 12, slow: 26, signal: 9 });
@@ -49,13 +44,9 @@ export const calculateIndicators = (historicalData) => {
             ema21, 
             ema50, 
             ema100,
-            ema200, 
             macd, 
-            smaFast, 
-            smaSlow, 
             stochRsi, 
             atr, 
-            sma200, 
             mmax, 
             mmin 
         };

@@ -1,4 +1,3 @@
-// components/CryptoData.js
 import React, { useState, useEffect } from "react";
 import { useInput } from "ink";
 import { useCryptoData } from "../../hooks/useCryptoData.js";
