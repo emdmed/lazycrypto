@@ -52,7 +52,7 @@ const TechnicalIndicators = ({
         createElement(
           Box,
           { marginLeft: 1 },
-          createElement(Text, { dimColor: true }, "   RSI"),
+          createElement(Text, { dimColor: true }, "    RSI"),
         ),
       ),
     ),
