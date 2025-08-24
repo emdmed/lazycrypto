@@ -7,8 +7,8 @@ import {
   getLatestValue,
   getPrevValue,
 } from "../../utils/indicatorUtils.js";
-import RowVisualizer from "./visualizations/rowVisualizer.js";
-import BollingerRowVisualizer from "./visualizations/BollingerBandsVisualizer.js";
+import RowVisualizer from "./visualizations/RowVisualizer.js";
+import BollingerRowVisualizer from "./visualizations/RangeVisualizer.js";
 
 const TechnicalIndicators = ({
   indicators,
@@ -61,7 +61,6 @@ const TechnicalIndicators = ({
         prevPrice: historicalData[historicalData.length - 2][1],
       }),
     ),
-    //createElement(MovingAverages, { indicators }),
   );
 };
 
@@ -91,6 +90,8 @@ const MovingAverages = ({ indicators }) => {
   );
 };
 
+
+
 const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
   const price = data.rate;
 
@@ -110,6 +111,20 @@ const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
           upperBand: getLatestValue(indicators.bb.upper),
           middleBand: getLatestValue(indicators.bb.middle),
           lowerBand: getLatestValue(indicators.bb.lower),
+          width: 20,
+        }),
+    ),
+    createElement(
+      Box,
+      { flexDirection: "column" },
+      indicators.bb &&
+        createElement(BollingerRowVisualizer, {
+          tag: "Min/Max: ",
+          price: price,
+          prevPrice: prevPrice,
+          upperBand: getLatestValue(indicators.mmax),
+          middleBand: (getLatestValue(indicators.mmax) - getLatestValue(indicators.mmin)) /2,
+          lowerBand: getLatestValue(indicators.mmin),
           width: 20,
         }),
     ),

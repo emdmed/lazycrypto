@@ -1,13 +1,14 @@
 import React from "react";
 import { Box, Text } from "ink";
 
-const BollingerRowVisualizer = ({
+const RangeVisualizer = ({
   price,
   upperBand,
   middleBand,
   lowerBand,
   prevPrice,
-  width = 30
+  width = 30,
+  tag = "Range: "
 }) => {
   
   const setSymbol = () => {
@@ -16,13 +17,13 @@ const BollingerRowVisualizer = ({
   }
   
   if (!price || !upperBand || !middleBand || !lowerBand) {
-    return React.createElement(Text, { color: "red" }, "BB: Missing data");
+    return React.createElement(Text, { color: "red" }, "Missing data");
   }
   
   const range = upperBand - lowerBand;
   
   if (range <= 0) {
-    return React.createElement(Text, { color: "red" }, "BB: Invalid range");
+    return React.createElement(Text, { color: "red" }, "Invalid range");
   }
   
   const pricePosition = (price - lowerBand) / range;
@@ -52,7 +53,7 @@ const BollingerRowVisualizer = ({
 
   
   return React.createElement(Box, { flexDirection: "row" },
-    React.createElement(Text, { dimColor: true }, "BB: "),
+    React.createElement(Text, { dimColor: true }, tag),
     React.createElement(Text, { color: price < lowerBand ? "red" : "cyan" }, setSymbol()),
     ...visualization.map((item, index) => 
       React.createElement(Text, { key: index, color: item.color }, item.symbol)
@@ -61,4 +62,4 @@ const BollingerRowVisualizer = ({
   );
 };
 
-export default BollingerRowVisualizer;
+export default RangeVisualizer;

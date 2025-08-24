@@ -11,7 +11,7 @@ import path from "path";
 import fs from "fs/promises";
 
 const clearTerminal = () => {
-  process.stdout.write("\x1B[2J\x1B[0f");
+  console.clear()
 };
 
 const App = () => {

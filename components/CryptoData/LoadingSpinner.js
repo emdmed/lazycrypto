@@ -14,7 +14,7 @@ const LoadingSpinner = ({ ticker }) => {
     createElement(Box, { flexDirection: "row" },
       createElement(Spinner, { type: "dots" }),
       createElement(Text, { color: "yellow", marginLeft: 1 },
-        `Loading ${ticker} data...`
+        `${ticker}`
       )
     )
   );

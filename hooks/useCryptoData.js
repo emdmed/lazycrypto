@@ -68,7 +68,7 @@ export const useCryptoData = (currentCrypto, apiKey) => {
         point.volume || 0    
       ]);
       
-      const sortedData = processedData.sort((a, b) => b[0] - a[0]);
+      const sortedData = processedData.sort((a, b) => a[0] - b[0]);
       
       setHistoricalData(sortedData);
       
