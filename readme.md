@@ -30,6 +30,9 @@ It will be saved in .config/lazycrypto/config.json
 
 \ \ \ = going down
 
+<img width="761" height="181" alt="image" src="https://github.com/user-attachments/assets/dc45248a-c619-4288-b6b2-68e9a43bb7fa" />
+
+
 **Why LiveCoinWatch?**
 - ✅ **10,000 daily requests** (333x more than CoinGecko)
 - ✅ **FREE tier** with no expiration
