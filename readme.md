@@ -14,7 +14,7 @@ A modern cryptocurrency tracking dashboard with real-time data, technical indica
 ### 1. Installation
 
 ```bash
-npx lazycrypto-cli
+npx lazycrypto-cli@latest
 ```
 
 ### 2. Launch and Setup
