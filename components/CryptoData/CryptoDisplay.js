@@ -23,6 +23,7 @@ const CryptoDisplay = ({
       flexDirection: "column"
     },
       createElement(CryptoHeader, { data, ticker }),
+          indicators && createElement(TechnicalIndicators, { indicators }),
       createElement(CryptoControls, {
         historicalLoading,
         historicalData,
@@ -30,7 +31,7 @@ const CryptoDisplay = ({
         onShowMenu
       })
     ),
-    indicators && createElement(TechnicalIndicators, { indicators })
+
   );
 };
 

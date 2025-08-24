@@ -5,25 +5,25 @@ import {
   formatIndicatorValue, 
   getIndicatorColor, 
   getMACDValue,
-  getLatestValue 
+  getLatestValue, 
+  getPrevValue
 } from '../../utils/indicatorUtils.js';
+import RowVisualizer from './visualizations/rowVisualizer.js';
 
 const TechnicalIndicators = ({ indicators }) => {
   return createElement(Box, {
     width: '100%',
     minWidth: 60,
-    borderStyle: "round",
-    borderColor: "green",
-    padding: 1,
+    padding: 0,
     flexDirection: "column",
     marginTop: 1
   },
-    createElement(Text, { bold: true, color: "green", marginBottom: 1 }, "📊 Technical Indicators"),
     
     // RSI and MACD
     createElement(Box, { flexDirection: "row", justifyContent: "space-between" },
       createElement(Box, { flexDirection: "row" },
-        createElement(Text, { dimColor: true }, "RSI(20): "),
+        createElement(Text, { dimColor: true }, "RSI(20)"),
+        createElement(Box, {marginLeft: 1, marginRight: 1}, createElement(RowVisualizer, {value: getLatestValue(indicators.rsi), prevValue: getPrevValue(indicators.rsi)})),
         createElement(Text, {
           color: indicators.rsi ? getIndicatorColor('rsi', getLatestValue(indicators.rsi)) : 'gray'
         }, formatIndicatorValue(indicators.rsi))
@@ -31,16 +31,20 @@ const TechnicalIndicators = ({ indicators }) => {
       createElement(Box, { flexDirection: "row" },
         createElement(Text, { dimColor: true }, "MACD: "),
         createElement(Text, {
-          color: indicators.macd ? getIndicatorColor('macd', getMACDValue(indicators.macd)) : 'gray'
-        }, getMACDValue(indicators.macd)?.toFixed(2) || 'N/A')
+          color: indicators.macd ? getIndicatorColor('macd', getMACDValue(indicators.macd.macdLine)) : 'gray'
+        }, getMACDValue(indicators.macd.macdLine)?.toFixed(2) || 'N/A'),
+      ),
+      createElement(Box, { flexDirection: "row" },
+        createElement(Text, { dimColor: true }, "Signal: "),
+        createElement(Text, {
+          color: indicators.macd ? getIndicatorColor('signal', getMACDValue(indicators.macd.signalLine)) : 'gray'
+        }, getMACDValue(indicators.macd.signalLine)?.toFixed(2) || 'N/A'),
       )
     ),
     
-    // Moving Averages
-    createElement(MovingAverages, { indicators }),
+    //createElement(MovingAverages, { indicators }),
     
-    // Bollinger Bands and Other Indicators
-    createElement(OtherIndicators, { indicators })
+    //createElement(OtherIndicators, { indicators })
   );
 };
 

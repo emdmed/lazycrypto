@@ -74,7 +74,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
     return React.createElement(Box, { flexDirection: "column" },
       React.createElement(Box, { marginBottom: 1 },
         React.createElement(Text, { bold: true, color: "cyan" }, 
-          `🚀 Select Cryptocurrencies (${selectedCryptos.length}/5 selected)`
+          `Select Cryptocurrencies (${selectedCryptos.length}/5 selected)`
         )
       ),
       React.createElement(Text, { dimColor: true, marginBottom: 1 }, 
@@ -90,7 +90,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
   if (selectedCryptos.length === 0) {
     return React.createElement(Box, { flexDirection: "column" },
       React.createElement(Box, { marginBottom: 1 },
-        React.createElement(Text, { bold: true, color: "cyan" }, "🚀 LazyCrypto Dashboard")
+        React.createElement(Text, { bold: true, color: "cyan" }, "LazyCrypto")
       ),
       React.createElement(Text, { color: "yellow" }, "No cryptocurrencies selected."),
       React.createElement(Box, { marginTop: 1 },
@@ -104,7 +104,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
     // Header
     React.createElement(Box, { marginBottom: 1, justifyContent: "space-between" },
       React.createElement(Text, { bold: true, color: "cyan" }, 
-        `🚀 LazyCrypto Dashboard (${selectedCryptos.length} cryptos)`
+        `LazyCrypto)`
       ),
       React.createElement(Text, { dimColor: true }, 
         new Date().toLocaleTimeString()

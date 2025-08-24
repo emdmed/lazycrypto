@@ -15,11 +15,19 @@ export const getLatestValue = (indicatorData) => {
   return indicatorData;
 };
 
+export const getPrevValue = (indicatorData) => {
+  if (!indicatorData) return null;
+  if (Array.isArray(indicatorData)) {
+    return indicatorData[indicatorData.length - 2] || null;
+  }
+  return indicatorData;
+};
+
 export const getMACDValue = (macdData) => {
-  if (!macdData || !macdData.macd || !Array.isArray(macdData.macd) || macdData.macd.length === 0) {
+  if (!macdData || !Array.isArray(macdData) || macdData.length === 0) {
     return null;
   }
-  return macdData.macd[macdData.macd.length - 1];
+  return macdData[macdData.length - 1];
 };
 
 export const getIndicatorColor = (indicator, value) => {

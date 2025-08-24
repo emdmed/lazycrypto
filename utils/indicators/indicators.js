@@ -8,9 +8,7 @@ export const calculateIndicators = (historicalData) => {
     const highs = historicalData.map(candle => parseFloat(candle[2]));   // high price
     const lows = historicalData.map(candle => parseFloat(candle[3]));    // low price
     const opens = historicalData.map(candle => parseFloat(candle[1]));   // open price
-    
-    console.log(`Calculating indicators for ${closes.length} data points`);
-    
+        
     try {
         // RSI - Relative Strength Index
         const rsi = indicators.rsi(closes, { period: 20 });
@@ -43,7 +41,6 @@ export const calculateIndicators = (historicalData) => {
         const mmin = indicators.mmin(lows, { period: 20 });
         const mmax = indicators.mmax(highs, { period: 20 });
         
-        console.log('All indicators calculated successfully');
         
         return { 
             bb, 

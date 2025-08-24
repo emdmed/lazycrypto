@@ -34,9 +34,7 @@ export const useCryptoData = (currentCrypto, apiKey) => {
       const apiCode = getApiCode(currentCrypto);
       const now = Date.now();
       const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
-      
-      console.log(`Fetching historical data for ${apiCode}`);
-      
+            
       const response = await axios.post(
         'https://api.livecoinwatch.com/coins/single/history',
         {
@@ -55,10 +53,8 @@ export const useCryptoData = (currentCrypto, apiKey) => {
       );
       
       const historyArray = response.data?.history || [];
-      console.log(`Received ${historyArray.length} historical data points`);
       
       if (historyArray.length === 0) {
-        console.log('No history data returned from API');
         setHistoricalData([]);
         setIndicators(null);
         return;
@@ -75,9 +71,8 @@ export const useCryptoData = (currentCrypto, apiKey) => {
       ]);
       
       // Sort by timestamp
-      const sortedData = processedData.sort((a, b) => a[0] - b[0]);
+      const sortedData = processedData.sort((a, b) => b[0] - a[0]);
       
-      console.log(`Processed ${sortedData.length} final data points`);
       setHistoricalData(sortedData);
       
       // Calculate indicators if we have enough data
@@ -85,13 +80,11 @@ export const useCryptoData = (currentCrypto, apiKey) => {
         try {
           const calculatedIndicators = calculateIndicators(sortedData);
           setIndicators(calculatedIndicators);
-          console.log('Indicators calculated successfully');
         } catch (indicatorError) {
           console.error('Error calculating indicators:', indicatorError);
           setIndicators(null);
         }
       } else {
-        console.log(`Not enough data for indicators (${sortedData.length} points, need 100+)`);
         setIndicators(null);
       }
       
