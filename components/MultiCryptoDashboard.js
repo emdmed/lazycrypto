@@ -122,7 +122,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
     // Footer with controls
     React.createElement(Box, { marginTop: 1, flexDirection: "column" },
       React.createElement(Text, { dimColor: true }, 
-        "'S' select cryptos | 'R' refresh | 'B' back | 'Q' quit"
+        "'S' select cryptos | 'R' refresh | 'C' config | 'Q' quit"
       )
     )
   );

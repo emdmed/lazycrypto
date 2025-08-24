@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Text, useInput } from "ink";
 
-const ConfigPanel = ({ onSave, onCancel }) => {
+const ConfigPanel = ({ onSave, onCancel, configData }) => {
   const [apiKey, setApiKey] = useState("");
   const [error, setError] = useState("");
   const [showInstructions, setShowInstructions] = useState(true);
   const [cursorPosition, setCursorPosition] = useState(0);
+  
+  useEffect(() => {
+    setApiKey(configData?.apiKey || "")
+  }, [configData?.apiKey])
 
   useInput((input, key) => {
     if (key.escape) {
@@ -20,12 +24,12 @@ const ConfigPanel = ({ onSave, onCancel }) => {
       if (apiKey.length > 0) {
         setApiKey(apiKey.slice(0, -1));
         setCursorPosition(Math.max(0, cursorPosition - 1));
-        setError(""); // Clear error on input
+        setError("");
       }
     } else if (input && !key.ctrl && !key.meta && !key.shift) {
       setApiKey(apiKey + input);
       setCursorPosition(cursorPosition + input.length);
-      setError(""); // Clear error on input
+      setError(""); 
     }
   });
 
@@ -43,7 +47,6 @@ const ConfigPanel = ({ onSave, onCancel }) => {
     onSave(apiKey.trim());
   };
 
-  // Mask the API key for display
   const maskedKey = apiKey ? "*".repeat(apiKey.length) : "";
   const displayValue = maskedKey || "";
 

@@ -41,6 +41,11 @@ const TechnicalIndicators = ({
           }),
         ),
         createElement(
+          Box,
+          { marginLeft: 1 },
+          createElement(Text, { dimColor: true }, "         RSI "),
+        ),
+        createElement(
           Text,
           {
             color: indicators.rsi
@@ -48,11 +53,6 @@ const TechnicalIndicators = ({
               : "gray",
           },
           formatIndicatorValue(indicators.rsi),
-        ),
-        createElement(
-          Box,
-          { marginLeft: 1 },
-          createElement(Text, { dimColor: true }, "    RSI"),
         ),
       ),
     ),
@@ -114,7 +114,7 @@ const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
           middleBand: getLatestValue(indicators.bb.middle),
           lowerBand: getLatestValue(indicators.bb.lower),
           width: 20,
-          tag: "BB: ",
+          tag: "BB",
         }),
     ),
     createElement(
@@ -122,7 +122,7 @@ const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
       { flexDirection: "column" },
       indicators.bb &&
         createElement(RangeVisualizer, {
-          tag: "Min/Max: ",
+          tag: "Min/Max",
           price: price,
           prevPrice: prevPrice,
           upperBand: getLatestValue(indicators.mmax),

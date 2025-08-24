@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import React, { useEffect, useState } from "react";
-import { Box, Text } from "ink";
+import { Box, Text, useInput } from "ink";
 import MultiCryptoDashboard from "./MultiCryptoDashboard.js";
 import ConfigPanel from "./ConfigPanel.js";
 import { readJsonFromFile } from "../utils/readJsonFile.js";
@@ -18,6 +18,20 @@ const App = () => {
   const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [apiKey, setApiKey] = useState("");
+  const [configData, setConfigData] = useState({})
+
+  useInput((input, key) => {
+    if (!isLoading && !isConfigPanelVisible) {
+      if (input.toLowerCase() === 'c') {
+        setIsConfigPanelVisible(true);
+      }
+    }
+    
+    // Handle ESC key to close config panel
+    if (key.escape && isConfigPanelVisible) {
+      setIsConfigPanelVisible(false);
+    }
+  });
 
   useEffect(() => {
     clearTerminal();
@@ -33,9 +47,9 @@ const App = () => {
       
       if (configData && configData.apiKey) {
         setApiKey(configData.apiKey);
+        setConfigData(configData)
         setIsLoading(false);
       } else {
-        // Config exists but no API key
         setIsConfigPanelVisible(true);
         setIsLoading(false);
       }
@@ -51,10 +65,8 @@ const App = () => {
     const filePath = path.join(configDir, "config.json");
     
     try {
-      // Ensure directory exists
       await fs.mkdir(configDir, { recursive: true });
       
-      // Save the config
       const configData = {
         apiKey: newApiKey,
         createdAt: new Date().toISOString(),
@@ -67,6 +79,14 @@ const App = () => {
       setIsConfigPanelVisible(false);
     } catch (err) {
       console.error("Error saving config:", err);
+    }
+  };
+
+  const handleConfigCancel = () => {
+    if (apiKey) {
+      setIsConfigPanelVisible(false);
+    } else {
+      process.exit(0);
     }
   };
 
@@ -85,7 +105,8 @@ const App = () => {
   if (isConfigPanelVisible) {
     return React.createElement(ConfigPanel, {
       onSave: handleApiKeySave,
-      onCancel: handleBack
+      onCancel: handleConfigCancel,
+      configData
     });
   }
 
