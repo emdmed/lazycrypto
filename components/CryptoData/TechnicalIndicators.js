@@ -8,7 +8,7 @@ import {
   getPrevValue,
 } from "../../utils/indicatorUtils.js";
 import RowVisualizer from "./visualizations/RowVisualizer.js";
-import BollingerRowVisualizer from "./visualizations/RangeVisualizer.js";
+import RangeVisualizer from "./visualizations/RangeVisualizer.js";
 
 const TechnicalIndicators = ({
   indicators,
@@ -32,10 +32,9 @@ const TechnicalIndicators = ({
       createElement(
         Box,
         { flexDirection: "row" },
-        createElement(Text, { dimColor: true }, "RSI"),
         createElement(
           Box,
-          { marginLeft: 1, marginRight: 1 },
+          { marginLeft: 0, marginRight: 1 },
           createElement(RowVisualizer, {
             value: getLatestValue(indicators.rsi),
             prevValue: getPrevValue(indicators.rsi),
@@ -49,6 +48,11 @@ const TechnicalIndicators = ({
               : "gray",
           },
           formatIndicatorValue(indicators.rsi),
+        ),
+        createElement(
+          Box,
+          { marginLeft: 1 },
+          createElement(Text, { dimColor: true }, "   RSI"),
         ),
       ),
     ),
@@ -90,8 +94,6 @@ const MovingAverages = ({ indicators }) => {
   );
 };
 
-
-
 const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
   const price = data.rate;
 
@@ -99,31 +101,35 @@ const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
     Box,
     {
       flexDirection: "column",
-      marginTop: 1,
+      marginTop: 0,
     },
     createElement(
       Box,
       { flexDirection: "column" },
       indicators.bb &&
-        createElement(BollingerRowVisualizer, {
+        createElement(RangeVisualizer, {
           price: price,
           prevPrice: prevPrice,
           upperBand: getLatestValue(indicators.bb.upper),
           middleBand: getLatestValue(indicators.bb.middle),
           lowerBand: getLatestValue(indicators.bb.lower),
           width: 20,
+          tag: "BB: ",
         }),
     ),
     createElement(
       Box,
       { flexDirection: "column" },
       indicators.bb &&
-        createElement(BollingerRowVisualizer, {
+        createElement(RangeVisualizer, {
           tag: "Min/Max: ",
           price: price,
           prevPrice: prevPrice,
           upperBand: getLatestValue(indicators.mmax),
-          middleBand: (getLatestValue(indicators.mmax) - getLatestValue(indicators.mmin)) /2,
+          middleBand:
+            (getLatestValue(indicators.mmax) -
+              getLatestValue(indicators.mmin)) /
+            2,
           lowerBand: getLatestValue(indicators.mmin),
           width: 20,
         }),
