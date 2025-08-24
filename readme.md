@@ -50,25 +50,6 @@ Currently configured cryptocurrencies:
 - Polygon (MATIC)
 - Chainlink (LINK)
 
-## Technical Features
-
-### Real-time Data
-- **Automatic refresh**: Configurable intervals (default: 15 minutes)
-- **Live price updates**: Current rates with 24h change indicators
-- **Volume tracking**: Trading volume for each cryptocurrency
-- **Market data**: Market cap, supply, and ranking information
-
-### Technical Analysis
-- **RSI (Relative Strength Index)**: Momentum oscillator
-- **MACD**: Moving Average Convergence Divergence
-- **Moving Averages**: SMA and EMA calculations
-- **Historical charts**: 7-day price history visualization
-- **Indicators require**: Minimum 100 data points for accuracy
-
-
-## Indicators
-
-
 ## Contributing
 
 1. Fork the repository
@@ -80,12 +61,6 @@ Currently configured cryptocurrencies:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-- 📧 **Email**: [your-email@domain.com]
-- 🐛 **Issues**: [GitHub Issues](link-to-issues)
-- 📖 **Documentation**: [Wiki](link-to-wiki)
 
 ---
 
