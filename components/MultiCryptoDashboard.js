@@ -12,7 +12,7 @@ const availableCryptos = [
   { label: 'Chainlink (LINK)', value: 'chainlink', ticker: 'LINK' }
 ];
 
-const MultiCryptoDashboard = ({ onBack }) => {
+const MultiCryptoDashboard = ({ onBack, apiKey }) => {
   // Store API identifiers instead of tickers
   const [selectedCryptos, setSelectedCryptos] = useState(['bitcoin', 'ethereum']);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
@@ -121,7 +121,8 @@ const MultiCryptoDashboard = ({ onBack }) => {
         },
           React.createElement(CryptoData, { 
             crypto: cryptoId,
-            ticker: ticker
+            ticker: ticker,
+            apiKey: apiKey
           })
         );
       }) :

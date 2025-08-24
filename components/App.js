@@ -1,28 +1,101 @@
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 dotenv.config();
-import React, { useEffect } from 'react';
-import { Box } from 'ink';
-import MultiCryptoDashboard from './MultiCryptoDashboard.js';
+import React, { useEffect, useState } from "react";
+import { Box, Text } from "ink";
+import MultiCryptoDashboard from "./MultiCryptoDashboard.js";
+import ConfigPanel from "./ConfigPanel.js";
+import { readJsonFromFile } from "../utils/readJsonFile.js";
+import { writeJsonToFile } from "../utils/writeJsonFile.js";
+import os from "os";
+import path from "path";
+import fs from "fs/promises";
 
-// Function to clear terminal
 const clearTerminal = () => {
-  process.stdout.write('\x1B[2J\x1B[0f');
+  process.stdout.write("\x1B[2J\x1B[0f");
 };
 
 const App = () => {
-  // Clear terminal on app start
+  const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [apiKey, setApiKey] = useState("");
+
   useEffect(() => {
-    //clearTerminal();
+    clearTerminal();
+    checkConfig();
   }, []);
 
+  const checkConfig = async () => {
+    const configDir = path.join(os.homedir(), ".config/lazycrypto");
+    const filePath = path.join(configDir, "config.json");
+    
+    try {
+      const configData = await readJsonFromFile(filePath);
+      
+      if (configData && configData.apiKey) {
+        setApiKey(configData.apiKey);
+        setIsLoading(false);
+      } else {
+        // Config exists but no API key
+        setIsConfigPanelVisible(true);
+        setIsLoading(false);
+      }
+    } catch (err) {
+      // Config file doesn't exist
+      setIsConfigPanelVisible(true);
+      setIsLoading(false);
+    }
+  };
+
+  const handleApiKeySave = async (newApiKey) => {
+    const configDir = path.join(os.homedir(), ".config/lazycrypto");
+    const filePath = path.join(configDir, "config.json");
+    
+    try {
+      // Ensure directory exists
+      await fs.mkdir(configDir, { recursive: true });
+      
+      // Save the config
+      const configData = {
+        apiKey: newApiKey,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      await writeJsonToFile(configData, filePath);
+      
+      setApiKey(newApiKey);
+      setIsConfigPanelVisible(false);
+    } catch (err) {
+      console.error("Error saving config:", err);
+    }
+  };
+
   const handleBack = () => {
-    // Since we only have multi-crypto mode, back should exit
     process.exit(0);
   };
 
-  // Always render MultiCryptoDashboard as the only mode
-  return React.createElement(Box, { flexDirection: "column", padding: 1 },
-    React.createElement(MultiCryptoDashboard, { onBack: handleBack })
+  if (isLoading) {
+    return React.createElement(
+      Box,
+      { flexDirection: "column", padding: 1 },
+      React.createElement(Text, { color: "cyan" }, "Loading configuration...")
+    );
+  }
+
+  if (isConfigPanelVisible) {
+    return React.createElement(ConfigPanel, {
+      onSave: handleApiKeySave,
+      onCancel: handleBack
+    });
+  }
+
+  return React.createElement(
+    Box,
+    { flexDirection: "column", padding: 1 },
+    React.createElement(MultiCryptoDashboard, {
+      apiKey: apiKey,
+      onBack: handleBack
+    })
   );
 };
 

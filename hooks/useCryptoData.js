@@ -6,7 +6,7 @@ import { cryptoOptions } from '../constants/cryptoOptions.js';
 
 const REFETCH_INTERVAL = 120000;
 
-export const useCryptoData = (currentCrypto) => {
+export const useCryptoData = (currentCrypto, apiKey) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,9 +26,8 @@ export const useCryptoData = (currentCrypto) => {
       setHistoricalLoading(true);
       setError(null);
       
-      const apiKey = process.env.LIVECOINWATCH_API_KEY;
-      if (!apiKey || apiKey === 'your-api-key-here') {
-        setError('Please set your LIVECOINWATCH_API_KEY environment variable');
+      if (!apiKey) {
+        setError('Please set your LiveCoinWatch api key');
         return;
       }
       
@@ -113,10 +112,8 @@ export const useCryptoData = (currentCrypto) => {
       try {
         setLoading(true);
         setError(null);
-        
-        const apiKey = process.env.LIVECOINWATCH_API_KEY;
-        
-        if (!apiKey || apiKey === 'your-api-key-here') {
+                
+        if (!apiKey) {
           setError('Please set your LIVECOINWATCH_API_KEY environment variable');
           return;
         }
@@ -160,7 +157,7 @@ export const useCryptoData = (currentCrypto) => {
     fetchData();
     const interval = setInterval(fetchData, REFETCH_INTERVAL);
     return () => clearInterval(interval);
-  }, [currentCrypto]);
+  }, [currentCrypto, apiKey]);
 
   // Reset state when crypto changes
   useEffect(() => {
