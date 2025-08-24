@@ -96,7 +96,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
   return React.createElement(Box, { flexDirection: "column" },
     React.createElement(Box, { marginBottom: 1, justifyContent: "space-between" },
       React.createElement(Text, { bold: true, color: "cyan" }, 
-        `LazyCrypto (15 min, 20 periods)`
+        `LazyCrypto (15 min, 20 periods) - Auto-refresh every 15 mins`
       ),
       React.createElement(Text, { dimColor: true }, 
         new Date().toLocaleTimeString()

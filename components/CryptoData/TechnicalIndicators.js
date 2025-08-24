@@ -20,7 +20,6 @@ const TechnicalIndicators = ({
     Box,
     {
       width: "100%",
-      minWidth: 60,
       padding: 0,
       flexDirection: "column",
       marginTop: 1,
