@@ -6,48 +6,23 @@ A modern cryptocurrency tracking dashboard with real-time data, technical indica
 
 - 📊 **Real-time crypto data** with automatic refresh
 - 📈 **Technical indicators** (RSI, MACD, Moving Averages)
-- 🌐 **Web dashboard** with interactive charts
 - 💻 **CLI interface** for terminal users
-- 🔄 **Auto-fallback system** (LiveCoinWatch → CoinGecko)
 - ⚡ **High rate limits** with LiveCoinWatch API
-- 📱 **Responsive design** for all screen sizes
 
 ## Quick Start
 
 ### 1. Installation
 
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd crypto-dashboard
-
-# Install dependencies
-npm install
-
-# For CLI usage (optional)
-npm install -g .
+npx lazycrypto-cli
 ```
 
 ### 2. API Setup
 
-Get your **FREE** LiveCoinWatch API key:
+You will be prompted to add your free LiveCoinWatch api key
+<img width="914" height="468" alt="image" src="https://github.com/user-attachments/assets/f030f201-df5c-4b16-9fe7-91097e3e2fc3" />
 
-1. Go to [livecoinwatch.com/tools/api](https://www.livecoinwatch.com/tools/api)
-2. Click "Get API Key"
-3. Sign up with email (free account)
-4. Copy your API key
-
-### 3. Configuration
-
-Create a `.env` file in your project root:
-
-```bash
-# Required
-LIVECOINWATCH_API_KEY=your_actual_api_key_here
-
-# Optional (defaults shown)
-REFETCH_TIME=60000
-```
+It will be saved in .config/lazycrypto/config.json
 
 ### 4. Launch the App
 
