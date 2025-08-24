@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "bin": {
-    "lazycrypto-cli": "./index.js"
+    "lazycrypto": "./index.js"
   },
   "scripts": {
     "start": "node index.js",
