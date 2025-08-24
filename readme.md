@@ -24,6 +24,11 @@ You will be prompted to add your free LiveCoinWatch api key
 
 It will be saved in .config/lazycrypto/config.json
 
+### 3. Indicators
+
+/ / / = going up
+\ \ \ = going down
+
 **Why LiveCoinWatch?**
 - ✅ **10,000 daily requests** (333x more than CoinGecko)
 - ✅ **FREE tier** with no expiration
