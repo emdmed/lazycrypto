@@ -27,6 +27,7 @@ It will be saved in .config/lazycrypto/config.json
 ### 3. Indicators
 
 / / / = going up
+
 \ \ \ = going down
 
 **Why LiveCoinWatch?**
