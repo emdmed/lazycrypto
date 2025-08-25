@@ -17,7 +17,7 @@ const CryptoDisplay = ({
     <Box flexDirection="column">
       <Box
         width="100%"
-        minWidth={60}
+        minWidth="100%"
         borderStyle="round"
         borderColor="cyan"
         padding={0}

@@ -1,10 +1,10 @@
 // utils/indicatorUtils.js
 
-export const formatIndicatorValue = (value) => {
+export const formatIndicatorValue = (value, decimalplaces) => {
   if (Array.isArray(value)) {
-    return value[value.length - 1]?.toFixed(2) || 'N/A';
+    return value[value.length - 1]?.toFixed(decimalplaces ?? 2) || 'N/A';
   }
-  return typeof value === 'number' ? value.toFixed(2) : 'N/A';
+  return typeof value === 'number' ? value.toFixed(decimalplaces ?? 2) : 'N/A';
 };
 
 export const getLatestValue = (indicatorData) => {

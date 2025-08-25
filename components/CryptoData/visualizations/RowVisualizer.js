@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Box, Text } from "ink";
 
-const RowVisualizer = ({value, prevValue, factor = 10}) => {
+const RowVisualizer = ({value, prevValue, factor = 10, width}) => {
   
   const index = (value / factor).toFixed(0)
   
@@ -48,7 +48,7 @@ const RowVisualizer = ({value, prevValue, factor = 10}) => {
   }
   
   return (
-    <Box flexDirection="row">
+    <Box flexDirection="row" width={width}>
       {base.map((element, index) => 
         <Text color={element.color} key={index}>
           {setSymbol()}

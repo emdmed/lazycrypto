@@ -9,7 +9,7 @@ const CryptoHeader = ({ data, ticker }) => {
         <Text bold color="cyan">
           {data.name || 'Unknown'}
         </Text>
-        <Text color="gray" marginLeft={1}>
+        <Text color="white" marginLeft={1}>
           ({ticker})
         </Text>
       </Box>

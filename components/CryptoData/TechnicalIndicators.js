@@ -10,37 +10,32 @@ import {
 import RowVisualizer from "./visualizations/RowVisualizer.js";
 import RangeVisualizer from "./visualizations/RangeVisualizer.js";
 
-const TechnicalIndicators = ({
-  indicators,
-  data,
-  historicalData,
-  prevPrice,
-}) => {
+
+const RANGE_WIDTH = 16
+
+const TechnicalIndicators = ({ indicators, data, historicalData }) => {
   return (
-    <Box
-      width="100%"
-      padding={0}
-      flexDirection="column"
-      marginTop={1}
-    >
+    <Box width="100%" padding={0} flexDirection="column" marginTop={1}>
       <Box flexDirection="row" justifyContent="space-between">
         <Box flexDirection="row">
           <Box marginLeft={0} marginRight={1}>
             <RowVisualizer
+              width={RANGE_WIDTH}
               value={getLatestValue(indicators.rsi)}
               prevValue={getPrevValue(indicators.rsi)}
             />
           </Box>
-          <Box marginLeft={1}>
-            <Text dimColor>         RSI </Text>
+          <Box marginRight={1}>
+            <Text dimColor>RSI</Text>
           </Box>
           <Text
-            color={indicators.rsi
-              ? getIndicatorColor("rsi", getLatestValue(indicators.rsi))
-              : "gray"
+            color={
+              indicators.rsi
+                ? getIndicatorColor("rsi", getLatestValue(indicators.rsi))
+                : "gray"
             }
           >
-            {formatIndicatorValue(indicators.rsi)}
+            {formatIndicatorValue(indicators.rsi, 0)}
           </Text>
         </Box>
       </Box>
@@ -56,32 +51,11 @@ const TechnicalIndicators = ({
   );
 };
 
-const MovingAverages = ({ indicators }) => {
-  return (
-    <Box flexDirection="column" marginTop={1}>
-      <Box flexDirection="row" justifyContent="space-between">
-        <Text color="cyan">
-          EMA9: {formatIndicatorValue(indicators.ema9)}
-        </Text>
-        <Text color="cyan">
-          EMA21: {formatIndicatorValue(indicators.ema21)}
-        </Text>
-        <Text color="cyan">
-          EMA50: {formatIndicatorValue(indicators.ema50)}
-        </Text>
-      </Box>
-    </Box>
-  );
-};
-
 const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
   const price = data.rate;
 
   return (
-    <Box
-      flexDirection="column"
-      marginTop={0}
-    >
+    <Box flexDirection="column" marginTop={0}>
       <Box flexDirection="column">
         {indicators.bb && (
           <RangeVisualizer
@@ -90,7 +64,7 @@ const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
             upperBand={getLatestValue(indicators.bb.upper)}
             middleBand={getLatestValue(indicators.bb.middle)}
             lowerBand={getLatestValue(indicators.bb.lower)}
-            width={20}
+            width={RANGE_WIDTH}
             tag="BB"
           />
         )}
@@ -109,7 +83,7 @@ const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
               2
             }
             lowerBand={getLatestValue(indicators.mmin)}
-            width={20}
+            width={RANGE_WIDTH}
           />
         )}
       </Box>

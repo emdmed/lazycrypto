@@ -88,7 +88,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
       <Box flexDirection="column">
         <Box marginBottom={1}>
           <Text bold color="cyan">
-            LazyCrypto (15 min, 20  periods)
+            LazyCrypto Timeframe: 15m | Periods: 20 | Refresh: 15min
           </Text>
         </Box>
         <Text color="yellow">
@@ -107,7 +107,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
     <Box flexDirection="column">
       <Box marginBottom={1} justifyContent="space-between">
         <Text bold color="cyan">
-          LazyCrypto (15 min, 20 periods) - Auto-refresh every 15 mins
+          LazyCrypto Timeframe: 15m | Periods: 20 | Refresh: 15min
         </Text>
         <Text dimColor>
           {new Date().toLocaleTimeString()}
