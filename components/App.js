@@ -27,7 +27,6 @@ const App = () => {
       }
     }
     
-    // Handle ESC key to close config panel
     if (key.escape && isConfigPanelVisible) {
       setIsConfigPanelVisible(false);
     }
