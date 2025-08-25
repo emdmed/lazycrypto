@@ -10,7 +10,6 @@ import {
 import RowVisualizer from "./visualizations/RowVisualizer.js";
 import RangeVisualizer from "./visualizations/RangeVisualizer.js";
 
-
 const RANGE_WIDTH = 16
 
 const TechnicalIndicators = ({ indicators, data, historicalData }) => {

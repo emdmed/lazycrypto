@@ -18,6 +18,19 @@ export const useCryptoData = (currentCrypto, apiKey) => {
     return cryptoInfo ? cryptoInfo.apiCode : cryptoId.toUpperCase();
   };
 
+  const getKuCoinSymbol = (cryptoId) => {
+    const cryptoInfo = cryptoOptions.find(option => option.value === cryptoId);
+    const symbol = cryptoInfo ? cryptoInfo.apiCode : cryptoId.toUpperCase();
+    
+    if (symbol === 'BTC') return 'BTC-USDT';
+    if (symbol === 'ETH') return 'ETH-USDT';
+    if (symbol === 'ADA') return 'ADA-USDT';
+    if (symbol === 'DOT') return 'DOT-USDT';
+    if (symbol === 'SOL') return 'SOL-USDT';
+    
+    return `${symbol}-USDT`;
+  };
+
   const fetchHistoricalData = async () => {
     if (!currentCrypto) return;
     
@@ -25,54 +38,51 @@ export const useCryptoData = (currentCrypto, apiKey) => {
       setHistoricalLoading(true);
       setError(null);
       
-      if (!apiKey) {
-        setError('Please set your LiveCoinWatch api key');
-        return;
-      }
+      const kuCoinSymbol = getKuCoinSymbol(currentCrypto);
+      const now = Math.floor(Date.now() / 1000);
+      const hoursAgo = now - (26 * 60 * 60); 
       
-      const apiCode = getApiCode(currentCrypto);
-      const now = Date.now();
-      const sevenDaysAgo = now - (7 * 24 * 60 * 60 * 1000);
-            
-      const response = await axios.post(
-        'https://api.livecoinwatch.com/coins/single/history',
+      const klineResponse = await axios.get(
+        'https://api.kucoin.com/api/v1/market/candles',
         {
-          currency: 'USD',
-          code: apiCode,
-          start: sevenDaysAgo,
-          end: now,
-          meta: true
-        },
-        {
-          headers: {
-            'content-type': 'application/json',
-            'x-api-key': apiKey
+          params: {
+            symbol: kuCoinSymbol,
+            type: '15min',
+            startAt: hoursAgo,
+            endAt: now
           }
         }
       );
       
-      const historyArray = response.data?.history || [];
+      const klineData = klineResponse.data?.data || [];
       
-      if (historyArray.length === 0) {
+      if (klineData.length === 0) {
         setHistoricalData([]);
         setIndicators(null);
         return;
       }
       
-      const processedData = historyArray.map(point => [
-        point.date,           
-        point.rate,           
-        point.rate,           
-        point.rate,           
-        point.rate,          
-        point.volume || 0    
-      ]);
+      console.log("KuCoin historical data:", klineData);
+      
+      const processedData = klineData.map(candle => {
+        const [timestamp, open, close, high, low, volume, amount] = candle;
+        const timestampMs = parseInt(timestamp) * 1000; // Convert to milliseconds
+        
+        return [
+          timestampMs,           // [0] timestamp in ms
+          parseFloat(open),      // [1] open price
+          parseFloat(high),      // [2] high price  
+          parseFloat(low),       // [3] low price
+          parseFloat(close),     // [4] close price
+          parseFloat(volume)     // [5] volume
+        ];
+      });
       
       const sortedData = processedData.sort((a, b) => a[0] - b[0]);
       
       setHistoricalData(sortedData);
       
-      if (sortedData.length >= 100) {
+      if (sortedData.length >= 101) {
         try {
           const calculatedIndicators = calculateIndicators(sortedData);
           setIndicators(calculatedIndicators);
@@ -81,12 +91,13 @@ export const useCryptoData = (currentCrypto, apiKey) => {
           setIndicators(null);
         }
       } else {
+        console.log(`Need more data points for indicators: ${sortedData.length}/101`);
         setIndicators(null);
       }
       
     } catch (error) {
-      console.error('Error fetching historical data:', error);
-      setError(`Failed to fetch historical data: ${error.message}`);
+      console.error('Error fetching KuCoin historical data:', error);
+      setError(`Failed to fetch historical data from KuCoin: ${error.message}`);
       setHistoricalData([]);
       setIndicators(null);
     } finally {
@@ -125,6 +136,7 @@ export const useCryptoData = (currentCrypto, apiKey) => {
         );
         
         setData(response.data);
+        
         await fetchHistoricalData();
         
       } catch (err) {

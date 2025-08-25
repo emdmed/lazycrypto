@@ -32,7 +32,7 @@ const CryptoData = ({
       setCurrentTicker(initialTicker);
     }
   }, [initialCrypto, initialTicker, currentCrypto]);
-
+  
   useInput((input, key) => {
     if (!onBack) return;
 
