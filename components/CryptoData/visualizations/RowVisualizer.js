@@ -10,9 +10,9 @@ const RowVisualizer = ({
   marksColor = "white",
   marks = [0, 5, 9],
   fill = false,
-  valueColor = "red"
+  valueColor = "red",
 }) => {
-  const index = ((value / factor) - 1).toFixed(0);
+  const index = (value / factor - 1).toFixed(0);
 
   const base = new Array(10)
     .fill(null)
@@ -22,20 +22,25 @@ const RowVisualizer = ({
       return element;
     });
 
+  
+  if(index > 9 || index < 0){
+    return <Text color="red">Woops!</Text>
+  }
+  
   if (index && base) {
     base[index].color = "red";
   }
-  
+
   const setBaseColor = () => {
-    if(fill){
+    if (fill) {
       return base.map((element, _index) => {
-        if(_index <= index) return {color: valueColor}
-        return element
-      })
+        if (_index <= index) return { color: valueColor };
+        return element;
+      });
     } else {
-      return base
+      return base;
     }
-  }
+  };
 
   const setSymbol = () => {
     if (value > prevValue) return "/";
