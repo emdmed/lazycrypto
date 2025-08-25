@@ -11,14 +11,14 @@ import path from "path";
 import fs from "fs/promises";
 
 const clearTerminal = () => {
-  console.clear()
+  console.clear();
 };
 
 const App = () => {
   const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [apiKey, setApiKey] = useState("");
-  const [configData, setConfigData] = useState({})
+  const [configData, setConfigData] = useState({});
 
   useInput((input, key) => {
     if (!isLoading && !isConfigPanelVisible) {
@@ -47,7 +47,7 @@ const App = () => {
       
       if (configData && configData.apiKey) {
         setApiKey(configData.apiKey);
-        setConfigData(configData)
+        setConfigData(configData);
         setIsLoading(false);
       } else {
         setIsConfigPanelVisible(true);
@@ -95,28 +95,30 @@ const App = () => {
   };
 
   if (isLoading) {
-    return React.createElement(
-      Box,
-      { flexDirection: "column", padding: 1 },
-      React.createElement(Text, { color: "cyan" }, "Loading configuration...")
+    return (
+      <Box flexDirection="column" padding={1}>
+        <Text color="cyan">Loading configuration...</Text>
+      </Box>
     );
   }
 
   if (isConfigPanelVisible) {
-    return React.createElement(ConfigPanel, {
-      onSave: handleApiKeySave,
-      onCancel: handleConfigCancel,
-      configData
-    });
+    return (
+      <ConfigPanel
+        onSave={handleApiKeySave}
+        onCancel={handleConfigCancel}
+        configData={configData}
+      />
+    );
   }
 
-  return React.createElement(
-    Box,
-    { flexDirection: "column", padding: 1 },
-    React.createElement(MultiCryptoDashboard, {
-      apiKey: apiKey,
-      onBack: handleBack
-    })
+  return (
+    <Box flexDirection="column" padding={1}>
+      <MultiCryptoDashboard
+        apiKey={apiKey}
+        onBack={handleBack}
+      />
+    </Box>
   );
 };
 

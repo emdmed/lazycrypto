@@ -1,24 +1,33 @@
-import React, { createElement } from 'react';
+import React from 'react';
 import { Box, Text } from 'ink';
 import { formatPrice, formatPercentage } from '../../utils/formatters/formatters.js';
 
 const CryptoHeader = ({ data, ticker }) => {
-  return createElement(Box, { justifyContent: "space-between", width: "100%" },
-    createElement(Box, { flexDirection: "row" },
-      createElement(Text, { bold: true, color: "cyan" }, data.name || 'Unknown'),
-      createElement(Text, { color: "gray", marginLeft: 1 }, `(${ticker})`)
-    ),
-    createElement(Box, { flexDirection: "row" },
-      createElement(Text, { bold: true, color: "yellow" }, formatPrice(data.rate)),
-      createElement(Box, { flexDirection: "row", marginLeft: 2 },
-        createElement(Text, { dimColor: true }, "24h: "),
-        formatPercentage(data.delta?.day)
-      ),
-      createElement(Box, { flexDirection: "row", marginLeft: 2 },
-        createElement(Text, { dimColor: true }, "7d: "),
-        formatPercentage(data.delta?.week)
-      )
-    )
+  return (
+    <Box justifyContent="space-between" width="100%">
+      <Box flexDirection="row">
+        <Text bold color="cyan">
+          {data.name || 'Unknown'}
+        </Text>
+        <Text color="gray" marginLeft={1}>
+          ({ticker})
+        </Text>
+      </Box>
+      
+      <Box flexDirection="row">
+        <Text bold color="yellow">
+          {formatPrice(data.rate)}
+        </Text>
+        <Box flexDirection="row" marginLeft={2}>
+          <Text dimColor>24h: </Text>
+          {formatPercentage(data.delta?.day)}
+        </Box>
+        <Box flexDirection="row" marginLeft={2}>
+          <Text dimColor>7d: </Text>
+          {formatPercentage(data.delta?.week)}
+        </Box>
+      </Box>
+    </Box>
   );
 };
 

@@ -65,66 +65,83 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
   };
 
   if (showCryptoMenu) {
-    return React.createElement(Box, { flexDirection: "column" },
-      React.createElement(Box, { marginBottom: 1 },
-        React.createElement(Text, { bold: true, color: "cyan" }, 
-          `Select Cryptocurrencies (${selectedCryptos.length}/5 selected)`
-        )
-      ),
-      React.createElement(Text, { dimColor: true, marginBottom: 1 }, 
-        "Select/deselect cryptos to display. Press Enter on 'Done' when finished."
-      ),
-      React.createElement(SelectInput, { 
-        items: cryptoMenuItems, 
-        onSelect: handleMenuSelect
-      })
+    return (
+      <Box flexDirection="column">
+        <Box marginBottom={1}>
+          <Text bold color="cyan">
+            Select Cryptocurrencies ({selectedCryptos.length}/5 selected)
+          </Text>
+        </Box>
+        <Text dimColor marginBottom={1}>
+          Select/deselect cryptos to display. Press Enter on 'Done' when finished.
+        </Text>
+        <SelectInput 
+          items={cryptoMenuItems} 
+          onSelect={handleMenuSelect}
+        />
+      </Box>
     );
   }
 
   if (selectedCryptos.length === 0) {
-    return React.createElement(Box, { flexDirection: "column" },
-      React.createElement(Box, { marginBottom: 1 },
-        React.createElement(Text, { bold: true, color: "cyan" }, "LazyCrypto (15 min, 20  periods)")
-      ),
-      React.createElement(Text, { color: "yellow" }, "No cryptocurrencies selected."),
-      React.createElement(Box, { marginTop: 1 },
-        React.createElement(Text, { dimColor: true }, "Press 'S' to select cryptocurrencies")
-      )
+    return (
+      <Box flexDirection="column">
+        <Box marginBottom={1}>
+          <Text bold color="cyan">
+            LazyCrypto (15 min, 20  periods)
+          </Text>
+        </Box>
+        <Text color="yellow">
+          No cryptocurrencies selected.
+        </Text>
+        <Box marginTop={1}>
+          <Text dimColor>
+            Press 'S' to select cryptocurrencies
+          </Text>
+        </Box>
+      </Box>
     );
   }
 
-  return React.createElement(Box, { flexDirection: "column" },
-    React.createElement(Box, { marginBottom: 1, justifyContent: "space-between" },
-      React.createElement(Text, { bold: true, color: "cyan" }, 
-        `LazyCrypto (15 min, 20 periods) - Auto-refresh every 15 mins`
-      ),
-      React.createElement(Text, { dimColor: true }, 
-        new Date().toLocaleTimeString()
-      )
-    ),
+  return (
+    <Box flexDirection="column">
+      <Box marginBottom={1} justifyContent="space-between">
+        <Text bold color="cyan">
+          LazyCrypto (15 min, 20 periods) - Auto-refresh every 15 mins
+        </Text>
+        <Text dimColor>
+          {new Date().toLocaleTimeString()}
+        </Text>
+      </Box>
 
-    selectedCryptos.length > 0 ? 
-      selectedCryptos.map((cryptoId, index) => {
-        const ticker = getTickerForCrypto(cryptoId);
-        return React.createElement(Box, { 
-          key: `${cryptoId}-${index}-${refreshKey}`,
-          marginBottom: index < selectedCryptos.length - 1 ? 1 : 0
-        },
-          React.createElement(CryptoData, { 
-            crypto: cryptoId,
-            ticker: ticker,
-            apiKey: apiKey
-          })
-        );
-      }) :
-      React.createElement(Text, { color: "yellow" }, "Loading cryptocurrencies..."),
+      {selectedCryptos.length > 0 ? 
+        selectedCryptos.map((cryptoId, index) => {
+          const ticker = getTickerForCrypto(cryptoId);
+          return (
+            <Box 
+              key={`${cryptoId}-${index}-${refreshKey}`}
+              marginBottom={index < selectedCryptos.length - 1 ? 1 : 0}
+            >
+              <CryptoData 
+                crypto={cryptoId}
+                ticker={ticker}
+                apiKey={apiKey}
+              />
+            </Box>
+          );
+        }) :
+        <Text color="yellow">
+          Loading cryptocurrencies...
+        </Text>
+      }
 
-    // Footer with controls
-    React.createElement(Box, { marginTop: 1, flexDirection: "column" },
-      React.createElement(Text, { dimColor: true }, 
-        "'S' select cryptos | 'R' refresh | 'C' config | 'Q' quit"
-      )
-    )
+      {/* Footer with controls */}
+      <Box marginTop={1} flexDirection="column">
+        <Text dimColor>
+          'S' select cryptos | 'R' refresh | 'C' config | 'Q' quit
+        </Text>
+      </Box>
+    </Box>
   );
 };
 

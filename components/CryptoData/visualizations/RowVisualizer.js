@@ -37,7 +37,7 @@ const RowVisualizer = ({value, prevValue, factor = 10}) => {
       color: null
     },
   ]
-
+  
   if(index && base){
     base[index].color = "red"
   }
@@ -47,10 +47,14 @@ const RowVisualizer = ({value, prevValue, factor = 10}) => {
     return `\\`
   }
   
-  return React.createElement(
-    Box,
-    { flexDirection: "row" },
-    base.map((element, index) => React.createElement(Text, {color: element.color, key: index}, setSymbol()))
+  return (
+    <Box flexDirection="row">
+      {base.map((element, index) => 
+        <Text color={element.color} key={index}>
+          {setSymbol()}
+        </Text>
+      )}
+    </Box>
   );
 };
 

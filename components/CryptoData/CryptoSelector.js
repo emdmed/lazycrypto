@@ -1,21 +1,29 @@
 // components/CryptoSelector.js
-import React, { createElement } from 'react';
+import React from 'react';
 import { Box, Text } from 'ink';
 import SelectInput from 'ink-select-input';
 
 const CryptoSelector = ({ cryptoOptions, currentCrypto, onSelect, onCancel }) => {
-  return createElement(Box, { flexDirection: "column" },
-    createElement(Box, { marginBottom: 1 },
-      createElement(Text, { bold: true, color: "cyan" }, "🚀 Select Cryptocurrency")
-    ),
-    createElement(SelectInput, {
-      items: cryptoOptions,
-      onSelect: onSelect,
-      initialIndex: cryptoOptions.findIndex(option => option.value === currentCrypto)
-    }),
-    createElement(Box, { marginTop: 1 },
-      createElement(Text, { dimColor: true }, "Press 'S' to cancel selection")
-    )
+  return (
+    <Box flexDirection="column">
+      <Box marginBottom={1}>
+        <Text bold color="cyan">
+          🚀 Select Cryptocurrency
+        </Text>
+      </Box>
+      
+      <SelectInput
+        items={cryptoOptions}
+        onSelect={onSelect}
+        initialIndex={cryptoOptions.findIndex(option => option.value === currentCrypto)}
+      />
+      
+      <Box marginTop={1}>
+        <Text dimColor>
+          Press 'S' to cancel selection
+        </Text>
+      </Box>
+    </Box>
   );
 };
 
