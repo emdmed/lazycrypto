@@ -9,3 +9,4 @@ export const cryptoOptions = [
   { label: 'Chainlink (LINK)', value: 'chainlink', ticker: 'LINK', apiCode: 'LINK' },
   { label: 'Avalanche (AVAX)', value: 'avalanche-2', ticker: 'AVAX', apiCode: 'AVAX' },
   { label: 'Polkadot (DOT)', value: 'polkadot', ticker: 'DOT', apiCode: 'DOT' }
+]
