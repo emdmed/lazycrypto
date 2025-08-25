@@ -62,7 +62,6 @@ export const useCryptoData = (currentCrypto, apiKey) => {
         return;
       }
       
-      console.log("KuCoin historical data:", klineData);
       
       const processedData = klineData.map(candle => {
         const [timestamp, open, close, high, low, volume, amount] = candle;
@@ -91,7 +90,6 @@ export const useCryptoData = (currentCrypto, apiKey) => {
           setIndicators(null);
         }
       } else {
-        console.log(`Need more data points for indicators: ${sortedData.length}/101`);
         setIndicators(null);
       }
       
