@@ -4,6 +4,7 @@ import { Box } from "ink";
 import CryptoHeader from "./CryptoHeader.js";
 import CryptoControls from "./CryptoControls.js";
 import TechnicalIndicators from "./TechnicalIndicators.js";
+import VolumeIndicators from "./VolumeIndicators.js";
 
 const CryptoDisplay = ({
   data,
@@ -24,13 +25,16 @@ const CryptoDisplay = ({
         flexDirection="column"
       >
         <CryptoHeader data={data} ticker={ticker} />
-        {indicators && (
-          <TechnicalIndicators 
-            indicators={indicators} 
-            data={data} 
-            historicalData={historicalData} 
-          />
-        )}
+        <Box width="100%" flexDirection="row" justifyContent="space-between" alignItems="center">
+          {indicators && (
+            <TechnicalIndicators
+              indicators={indicators}
+              data={data}
+              historicalData={historicalData}
+            />
+          )}
+          <VolumeIndicators historicalData={historicalData} />
+        </Box>
         <CryptoControls
           historicalLoading={historicalLoading}
           historicalData={historicalData}

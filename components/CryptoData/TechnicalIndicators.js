@@ -3,7 +3,6 @@ import { Box, Text } from "ink";
 import {
   formatIndicatorValue,
   getIndicatorColor,
-  getMACDValue,
   getLatestValue,
   getPrevValue,
 } from "../../utils/indicatorUtils.js";
