@@ -53,33 +53,39 @@ const CryptoData = ({
   };
 
   if (loading) {
-    return React.createElement(LoadingSpinner, {
-      ticker: currentTicker || getTicker(currentCrypto),
-    });
+    return (
+      <LoadingSpinner 
+        ticker={currentTicker || getTicker(currentCrypto)}
+      />
+    );
   }
 
   if (error) {
-    return React.createElement(ErrorDisplay, { error: error });
+    return <ErrorDisplay error={error} />;
   }
 
   if (showCryptoMenu) {
-    return React.createElement(CryptoSelector, {
-      cryptoOptions,
-      currentCrypto,
-      onSelect: handleCryptoSelect,
-      onCancel: () => setShowCryptoMenu(false),
-    });
+    return (
+      <CryptoSelector 
+        cryptoOptions={cryptoOptions}
+        currentCrypto={currentCrypto}
+        onSelect={handleCryptoSelect}
+        onCancel={() => setShowCryptoMenu(false)}
+      />
+    );
   }
 
   if (!data) return null;
 
-  return React.createElement(CryptoDisplay, {
-    data,
-    ticker: currentTicker || getTicker(currentCrypto),
-    historicalData,
-    indicators,
-    onShowMenu: () => setShowCryptoMenu(true),
-  });
+  return (
+    <CryptoDisplay 
+      data={data}
+      ticker={currentTicker || getTicker(currentCrypto)}
+      historicalData={historicalData}
+      indicators={indicators}
+      onShowMenu={() => setShowCryptoMenu(true)}
+    />
+  );
 };
 
 const getTicker = (cryptoId) => {

@@ -17,13 +17,13 @@ const RangeVisualizer = ({
   }
   
   if (!price || !upperBand || !middleBand || !lowerBand) {
-    return React.createElement(Text, { color: "red" }, "Missing data");
+    return <Text color="red">Missing data</Text>;
   }
   
   const range = upperBand - lowerBand;
   
   if (range <= 0) {
-    return React.createElement(Text, { color: "red" }, "Invalid range");
+    return <Text color="red">Invalid range</Text>;
   }
   
   const pricePosition = (price - lowerBand) / range;
@@ -50,16 +50,24 @@ const RangeVisualizer = ({
     
     return { symbol, color };
   });
-
   
-  return React.createElement(Box, { flexDirection: "row" },
-    React.createElement(Text, { color: price < lowerBand ? "red" : "cyan" }, setSymbol()),
-    ...visualization.map((item, index) => 
-      React.createElement(Text, { key: index, color: item.color }, item.symbol)
-    ),
-    React.createElement(Text, { color: price > upperBand ? "red" : "magenta" }, setSymbol()),
-    React.createElement(Text, { dimColor: true }, ` ${tag}`),
-    
+  return (
+    <Box flexDirection="row">
+      <Text color={price < lowerBand ? "red" : "cyan"}>
+        {setSymbol()}
+      </Text>
+      {visualization.map((item, index) => 
+        <Text key={index} color={item.color}>
+          {item.symbol}
+        </Text>
+      )}
+      <Text color={price > upperBand ? "red" : "magenta"}>
+        {setSymbol()}
+      </Text>
+      <Text dimColor>
+        {` ${tag}`}
+      </Text>
+    </Box>
   );
 };
 

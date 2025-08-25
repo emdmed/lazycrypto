@@ -1,4 +1,4 @@
-import React, { createElement } from "react";
+import React from "react";
 import { Box, Text } from "ink";
 import {
   formatIndicatorValue,
@@ -16,123 +16,104 @@ const TechnicalIndicators = ({
   historicalData,
   prevPrice,
 }) => {
-  return createElement(
-    Box,
-    {
-      width: "100%",
-      padding: 0,
-      flexDirection: "column",
-      marginTop: 1,
-    },
-
-    createElement(
-      Box,
-      { flexDirection: "row", justifyContent: "space-between" },
-      createElement(
-        Box,
-        { flexDirection: "row" },
-        createElement(
-          Box,
-          { marginLeft: 0, marginRight: 1 },
-          createElement(RowVisualizer, {
-            value: getLatestValue(indicators.rsi),
-            prevValue: getPrevValue(indicators.rsi),
-          }),
-        ),
-        createElement(
-          Box,
-          { marginLeft: 1 },
-          createElement(Text, { dimColor: true }, "         RSI "),
-        ),
-        createElement(
-          Text,
-          {
-            color: indicators.rsi
+  return (
+    <Box
+      width="100%"
+      padding={0}
+      flexDirection="column"
+      marginTop={1}
+    >
+      <Box flexDirection="row" justifyContent="space-between">
+        <Box flexDirection="row">
+          <Box marginLeft={0} marginRight={1}>
+            <RowVisualizer
+              value={getLatestValue(indicators.rsi)}
+              prevValue={getPrevValue(indicators.rsi)}
+            />
+          </Box>
+          <Box marginLeft={1}>
+            <Text dimColor>         RSI </Text>
+          </Box>
+          <Text
+            color={indicators.rsi
               ? getIndicatorColor("rsi", getLatestValue(indicators.rsi))
-              : "gray",
-          },
-          formatIndicatorValue(indicators.rsi),
-        ),
-      ),
-    ),
-    createElement(
-      Box,
-      { flexDirection: "row" },
-      createElement(OtherIndicators, {
-        indicators,
-        data,
-        prevPrice: historicalData[historicalData.length - 2][1],
-      }),
-    ),
+              : "gray"
+            }
+          >
+            {formatIndicatorValue(indicators.rsi)}
+          </Text>
+        </Box>
+      </Box>
+
+      <Box flexDirection="row">
+        <OtherIndicators
+          indicators={indicators}
+          data={data}
+          prevPrice={historicalData[historicalData.length - 2][1]}
+        />
+      </Box>
+    </Box>
   );
 };
 
 const MovingAverages = ({ indicators }) => {
-  return createElement(
-    Box,
-    { flexDirection: "column", marginTop: 1 },
-    createElement(
-      Box,
-      { flexDirection: "row", justifyContent: "space-between" },
-      createElement(
-        Text,
-        { color: "cyan" },
-        `EMA9: ${formatIndicatorValue(indicators.ema9)}`,
-      ),
-      createElement(
-        Text,
-        { color: "cyan" },
-        `EMA21: ${formatIndicatorValue(indicators.ema21)}`,
-      ),
-      createElement(
-        Text,
-        { color: "cyan" },
-        `EMA50: ${formatIndicatorValue(indicators.ema50)}`,
-      ),
-    ),
+  return (
+    <Box flexDirection="column" marginTop={1}>
+      <Box flexDirection="row" justifyContent="space-between">
+        <Text color="cyan">
+          EMA9: {formatIndicatorValue(indicators.ema9)}
+        </Text>
+        <Text color="cyan">
+          EMA21: {formatIndicatorValue(indicators.ema21)}
+        </Text>
+        <Text color="cyan">
+          EMA50: {formatIndicatorValue(indicators.ema50)}
+        </Text>
+      </Box>
+    </Box>
   );
 };
 
 const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
   const price = data.rate;
 
-  return createElement(
-    Box,
-    {
-      flexDirection: "column",
-      marginTop: 0,
-    },
-    createElement(
-      Box,
-      { flexDirection: "column" },
-      indicators.bb &&
-        createElement(RangeVisualizer, {
-          price: price,
-          prevPrice: prevPrice,
-          upperBand: getLatestValue(indicators.bb.upper),
-          middleBand: getLatestValue(indicators.bb.middle),
-          lowerBand: getLatestValue(indicators.bb.lower),
-          width: 20,
-          tag: "BB",
-        }),
-    ),
-    createElement(
-      Box,
-      { flexDirection: "column" },
-      indicators.bb &&
-        createElement(RangeVisualizer, {
-          tag: "Min/Max",
-          price: price,
-          prevPrice: prevPrice,
-          upperBand: getLatestValue(indicators.mmax),
-          middleBand:
-            (getLatestValue(indicators.mmax) -
-              getLatestValue(indicators.mmin)) /
-            2,
-          lowerBand: getLatestValue(indicators.mmin),
-          width: 20,
-        }),
-    ),
+  return (
+    <Box
+      flexDirection="column"
+      marginTop={0}
+    >
+      <Box flexDirection="column">
+        {indicators.bb && (
+          <RangeVisualizer
+            price={price}
+            prevPrice={prevPrice}
+            upperBand={getLatestValue(indicators.bb.upper)}
+            middleBand={getLatestValue(indicators.bb.middle)}
+            lowerBand={getLatestValue(indicators.bb.lower)}
+            width={20}
+            tag="BB"
+          />
+        )}
+      </Box>
+
+      <Box flexDirection="column">
+        {indicators.bb && (
+          <RangeVisualizer
+            tag="Min/Max"
+            price={price}
+            prevPrice={prevPrice}
+            upperBand={getLatestValue(indicators.mmax)}
+            middleBand={
+              (getLatestValue(indicators.mmax) -
+                getLatestValue(indicators.mmin)) /
+              2
+            }
+            lowerBand={getLatestValue(indicators.mmin)}
+            width={20}
+          />
+        )}
+      </Box>
+    </Box>
   );
 };
 
