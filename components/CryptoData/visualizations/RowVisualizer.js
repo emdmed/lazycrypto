@@ -12,7 +12,7 @@ const RowVisualizer = ({
   fill = false,
   valueColor = "red",
 }) => {
-  const index = (value / factor - 1).toFixed(0);
+  const index = Math.abs(((value / factor) - 1).toFixed(0));
 
   const base = new Array(10)
     .fill(null)
@@ -23,7 +23,7 @@ const RowVisualizer = ({
     });
 
   
-  if(index > 9 || index < 0){
+  if(index > 9 || index < 0 || isNaN(index)){
     return <Text color="red">Woops!</Text>
   }
   
