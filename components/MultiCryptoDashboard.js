@@ -13,7 +13,7 @@ const availableCryptos = [
   { label: "Chainlink (LINK)", value: "chainlink", ticker: "LINK" },
 ];
 
-const MultiCryptoDashboard = ({ onBack, apiKey }) => {
+const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
   const [selectedCryptos, setSelectedCryptos] = useState([
     "bitcoin",
     "monero",
@@ -29,7 +29,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
     if (input === "s" || input === "S") {
       setShowCryptoMenu(!showCryptoMenu);
     } else if (input === "r" || input === "R") {
-      setRefreshKey((prev) => prev + 1); // Force refresh all cards
+      setRefreshKey((prev) => prev + 1); 
     } else if (input === "b" || input === "B") {
       onBack();
     } else if (input === "q" || input === "Q" || (key.ctrl && input === "c")) {
@@ -90,7 +90,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
       <Box flexDirection="column">
         <Box marginBottom={1}>
           <Text bold color="cyan">
-            LazyCrypto Timeframe: 15m | Periods: 20 | Refresh: 15min
+            LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh: 15min
           </Text>
         </Box>
         <Text color="yellow">No cryptocurrencies selected.</Text>
@@ -105,7 +105,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
     <Box flexDirection="column">
       <Box marginBottom={1} justifyContent="space-between">
         <Text bold color="cyan">
-          LazyCrypto Timeframe: 15m | Periods: 20 | Refresh: 15min
+          LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh: 15min
         </Text>
         <Text dimColor>{new Date().toLocaleTimeString()}</Text>
       </Box>
@@ -118,7 +118,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
               key={`${cryptoId}-${index}-${refreshKey}`}
               marginBottom={index < selectedCryptos.length - 1 ? 1 : 0}
             >
-              <CryptoData crypto={cryptoId} ticker={ticker} apiKey={apiKey} />
+              <CryptoData crypto={cryptoId} ticker={ticker} apiKey={apiKey} selectedTimeframe={selectedTimeframe} />
             </Box>
           );
         })
@@ -129,7 +129,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey }) => {
       {/* Footer with controls */}
       <Box marginTop={1} flexDirection="column">
         <Text dimColor>
-          'S' select cryptos | 'R' refresh | 'C' config | 'Q' quit
+          'S' select cryptos | 'R' refresh | 'T' timeframe selection | 'C' config | 'Q' quit
         </Text>
       </Box>
     </Box>

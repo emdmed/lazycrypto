@@ -12,6 +12,7 @@ const CryptoData = ({
   ticker: initialTicker,
   onBack,
   apiKey,
+  selectedTimeframe
 }) => {
   const [currentCrypto, setCurrentCrypto] = useState(initialCrypto);
   const [currentTicker, setCurrentTicker] = useState(initialTicker);
@@ -24,7 +25,7 @@ const CryptoData = ({
     historicalData,
     historicalLoading,
     indicators,
-  } = useCryptoData(currentCrypto, apiKey);
+  } = useCryptoData(currentCrypto, apiKey, selectedTimeframe);
 
   useEffect(() => {
     if (initialCrypto && initialCrypto !== currentCrypto) {

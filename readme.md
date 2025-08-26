@@ -1,13 +1,6 @@
 # Crypto Dashboard
 
-A modern cryptocurrency tracking dashboard with real-time data, technical indicators, and both web and CLI interfaces.
-
-## Features
-
-- 📊 **Real-time crypto data** with automatic refresh
-- 📈 **Technical indicators** (RSI, MACD, Moving Averages)
-- 💻 **CLI interface** for terminal users
-- ⚡ **High rate limits** with LiveCoinWatch API
+A CLI cryptocurrency tracking dashboard with real-time data and technical indicators.
 
 ## Quick Start
 
