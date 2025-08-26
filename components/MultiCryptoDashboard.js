@@ -129,7 +129,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
       {/* Footer with controls */}
       <Box marginTop={1} flexDirection="column">
         <Text dimColor>
-          'S' select cryptos | 'R' refresh | 'C' config | 'Q' quit
+          'S' select cryptos | 'R' refresh | 'T' timeframe selection | 'C' config | 'Q' quit
         </Text>
       </Box>
     </Box>
