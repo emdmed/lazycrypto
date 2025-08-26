@@ -21,7 +21,7 @@ const CryptoDisplay = ({
         minWidth="100%"
         borderStyle="round"
         borderColor="cyan"
-        padding={0}
+        padding={1}
         flexDirection="column"
       >
         <CryptoHeader data={data} ticker={ticker} />
