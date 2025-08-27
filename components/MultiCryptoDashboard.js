@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Text, useInput } from "ink";
 import SelectInput from "ink-select-input";
 import CryptoData from "./CryptoData/CryptoData.js";
+import { getArgs } from "../utils/getArgs.js";
 
 const availableCryptos = [
   { label: "Bitcoin (BTC)", value: "bitcoin", ticker: "BTC" },
@@ -21,7 +22,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   
-  const isMin = process.argv[2] === "mini"  
+  const { isMin } = getArgs(); 
   
 
   useEffect(() => {
@@ -119,7 +120,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
           return (
             <Box
               key={`${cryptoId}-${index}-${refreshKey}`}
-              marginBottom={index < selectedCryptos.length - 1 ? 1 : }
+              marginBottom={index < selectedCryptos.length - 1 ? 1 : 0}
             >
               <CryptoData crypto={cryptoId} ticker={ticker} apiKey={apiKey} selectedTimeframe={selectedTimeframe} />
             </Box>

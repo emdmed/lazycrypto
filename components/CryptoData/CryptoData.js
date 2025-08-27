@@ -7,6 +7,7 @@ import CryptoDisplay from "./CryptoDisplay.js";
 import LoadingSpinner from "./LoadingSpinner.js";
 import ErrorDisplay from "./ErrorDisplay.js";
 import CryptoDisplayMini from "./CryptoDisplayMini.js";
+import { getArgs } from "../../utils/getArgs.js";
 
 const CryptoData = ({
   crypto: initialCrypto,
@@ -18,8 +19,8 @@ const CryptoData = ({
   const [currentCrypto, setCurrentCrypto] = useState(initialCrypto);
   const [currentTicker, setCurrentTicker] = useState(initialTicker);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  
-    const isMin = process.argv[2] === "mini" 
+
+  const { isMin } = getArgs();
 
   const {
     data,

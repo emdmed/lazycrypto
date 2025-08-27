@@ -1,5 +1,7 @@
+//components/CryptoData/visualizations/RangeVisualizer.js
 import React from "react";
 import { Box, Text } from "ink";
+import { getArgs } from "../../../utils/getArgs.js";
 
 const RangeVisualizer = ({
   price,
@@ -10,7 +12,8 @@ const RangeVisualizer = ({
   width = 30,
   tag = "Range: ",
 }) => {
-  const isMin = process.argv[2] === "mini";
+  
+  const { isMin } = getArgs();
 
   const setSymbol = () => {
     if (price > prevPrice) return `/`;

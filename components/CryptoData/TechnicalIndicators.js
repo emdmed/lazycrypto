@@ -8,18 +8,19 @@ import {
 } from "../../utils/indicatorUtils.js";
 import RowVisualizer from "./visualizations/RowVisualizer.js";
 import RangeVisualizer from "./visualizations/RangeVisualizer.js";
+import { getArgs } from "../../utils/getArgs.js";
 
 const RANGE_WIDTH = 16;
 
 const TechnicalIndicators = ({ indicators, data, historicalData }) => {
-  const isMin = process.argv[2] === "mini";
+  const { isMin } = getArgs();
 
   return (
     <Box
       width="100%"
       padding={0}
       flexDirection={isMin ? "row" : "column"}
-      marginTop={1}
+      marginTop={isMin ? 0 : 1}
     >
       <Box flexDirection="row" justifyContent="space-between">
         <Box flexDirection="row">
@@ -78,7 +79,7 @@ const TechnicalIndicators = ({ indicators, data, historicalData }) => {
 
 const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
   const price = data.rate;
-  const isMin = process.argv[2] === "mini";
+  const { isMin } = getArgs();
   return (
     <Box
       flexDirection={isMin ? "row" : "column"}
