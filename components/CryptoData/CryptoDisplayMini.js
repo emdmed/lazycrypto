@@ -29,7 +29,7 @@ const CryptoDisplayMini = ({
             <Text>{ticker ? ticker : ""} </Text>
           </Box>
           <Box flexDirection="row" marginRight={1}>
-            <Text>{formatPrice(data?.rate)}</Text>
+            <Text color="yellow">{formatPrice(data?.rate)}</Text>
           </Box>
         </Box>
         <Box

@@ -10,51 +10,12 @@ import { writeJsonToFile } from "../utils/writeJsonFile.js";
 import os from "os";
 import path from "path";
 import fs from "fs/promises";
-import { execSync } from "child_process";
 import { getArgs } from "../utils/getArgs.js";
+import { setupZellijLayout } from "./CryptoData/terminals/zellij.js";
+import { setupTmuxLayout } from "./CryptoData/terminals/tmux.js";
 
 const clearTerminal = () => {
   console.clear();
-};
-
-const isRunningInZellij = () => {
-  // Check multiple environment variables that indicate zellij session
-  return !!(
-    process.env.ZELLIJ_SESSION_NAME ||
-    process.env.ZELLIJ ||
-    process.env.ZELLIJ_PANE_ID
-  );
-};
-
-const setupZellijLayout = () => {
-  if (!isRunningInZellij()) {
-    console.warn('Warning: isMin parameter requires running inside zellij terminal multiplexer');
-    console.warn('Please start zellij first: zellij');
-    return;
-  }
-
-  try {
-    // Get current working directory
-    const currentDir = process.cwd();
-    
-    // Use zellij run to create a new pane with explicit cwd
-    execSync(`zellij run --direction down --cwd "${currentDir}" -- $SHELL`, { stdio: 'ignore' });
-    
-    // Move to the top pane
-    execSync('zellij action move-focus up', { stdio: 'ignore' });
-    
-    // Use the +/- resize commands to make the top pane smaller
-    // Multiple decreases should shrink it to roughly 3 lines
-    for (let i = 0; i < 8; i++) {
-      execSync('zellij action resize -', { stdio: 'ignore' });
-    }
-    
-    // After resizing, move focus to the bottom pane
-    execSync('zellij action move-focus down', { stdio: 'ignore' });
-    
-  } catch (error) {
-    console.error('Failed to setup zellij layout:', error.message);
-  }
 };
 
 const App = () => {
@@ -90,12 +51,12 @@ const App = () => {
 
   useEffect(() => {
     clearTerminal();
-    
-    // Setup zellij layout if isMin is true
-    if (isMin) {
-      setupZellijLayout();
-    }
-    
+
+     if (isMin) {
+       setupZellijLayout()
+       setupTmuxLayout();
+     }
+
     checkConfig();
   }, [isMin]);
 
@@ -168,7 +129,6 @@ const App = () => {
       setIsTimeframeSelectorVisible(false);
     } catch (err) {
       console.error("Error saving timeframe config:", err);
-      // Still update the state even if save fails
       setSelectedTimeframe(timeframe);
       setIsTimeframeSelectorVisible(false);
     }

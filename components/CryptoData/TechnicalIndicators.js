@@ -80,6 +80,9 @@ const TechnicalIndicators = ({ indicators, data, historicalData }) => {
 const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
   const price = data.rate;
   const { isMin } = getArgs();
+
+  const middle = ((getLatestValue(indicators.mmax) - getLatestValue(indicators.mmin)) / 2) + getLatestValue(indicators.mmin);
+ 
   return (
     <Box
       flexDirection={isMin ? "row" : "column"}
@@ -107,11 +110,7 @@ const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
             price={price}
             prevPrice={prevPrice}
             upperBand={getLatestValue(indicators.mmax)}
-            middleBand={
-              (getLatestValue(indicators.mmax) -
-                getLatestValue(indicators.mmin)) /
-              2
-            }
+            middleBand={middle}
             lowerBand={getLatestValue(indicators.mmin)}
             width={isMin ? 10 : RANGE_WIDTH}
           />
