@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Text, useInput } from "ink";
 import SelectInput from "ink-select-input";
 import CryptoData from "./CryptoData/CryptoData.js";
+import { getArgs } from "../utils/getArgs.js";
 
 const availableCryptos = [
   { label: "Bitcoin (BTC)", value: "bitcoin", ticker: "BTC" },
@@ -20,6 +21,9 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
   ]);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  
+  const { isMin } = getArgs(); 
+  
 
   useEffect(() => {
     process.stdout.write("\x1B[2J\x1B[0f");
@@ -103,12 +107,12 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
 
   return (
     <Box flexDirection="column">
-      <Box marginBottom={1} justifyContent="space-between">
+      {!isMin && <Box marginBottom={1} justifyContent="space-between">
         <Text bold color="cyan">
           LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh: 15min
         </Text>
         <Text dimColor>{new Date().toLocaleTimeString()}</Text>
-      </Box>
+      </Box>}
 
       {selectedCryptos.length > 0 ? (
         selectedCryptos.map((cryptoId, index) => {
@@ -127,11 +131,11 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
       )}
 
       {/* Footer with controls */}
-      <Box marginTop={1} flexDirection="column">
+      {!isMin && <Box marginTop={1} flexDirection="column">
         <Text dimColor>
           'S' select cryptos | 'R' refresh | 'T' timeframe selection | 'C' config | 'Q' quit
         </Text>
-      </Box>
+      </Box>}
     </Box>
   );
 };

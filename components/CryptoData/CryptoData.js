@@ -6,17 +6,21 @@ import CryptoSelector from "./CryptoSelector.js";
 import CryptoDisplay from "./CryptoDisplay.js";
 import LoadingSpinner from "./LoadingSpinner.js";
 import ErrorDisplay from "./ErrorDisplay.js";
+import CryptoDisplayMini from "./CryptoDisplayMini.js";
+import { getArgs } from "../../utils/getArgs.js";
 
 const CryptoData = ({
   crypto: initialCrypto,
   ticker: initialTicker,
   onBack,
   apiKey,
-  selectedTimeframe
+  selectedTimeframe,
 }) => {
   const [currentCrypto, setCurrentCrypto] = useState(initialCrypto);
   const [currentTicker, setCurrentTicker] = useState(initialTicker);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
+
+  const { isMin } = getArgs();
 
   const {
     data,
@@ -33,7 +37,7 @@ const CryptoData = ({
       setCurrentTicker(initialTicker);
     }
   }, [initialCrypto, initialTicker, currentCrypto]);
-  
+
   useInput((input, key) => {
     if (!onBack) return;
 
@@ -55,9 +59,7 @@ const CryptoData = ({
 
   if (loading) {
     return (
-      <LoadingSpinner 
-        ticker={currentTicker || getTicker(currentCrypto)}
-      />
+      <LoadingSpinner ticker={currentTicker || getTicker(currentCrypto)} />
     );
   }
 
@@ -67,7 +69,7 @@ const CryptoData = ({
 
   if (showCryptoMenu) {
     return (
-      <CryptoSelector 
+      <CryptoSelector
         cryptoOptions={cryptoOptions}
         currentCrypto={currentCrypto}
         onSelect={handleCryptoSelect}
@@ -78,8 +80,19 @@ const CryptoData = ({
 
   if (!data) return null;
 
+  if (isMin)
+    return (
+      <CryptoDisplayMini
+        data={data}
+        ticker={currentTicker || getTicker(currentCrypto)}
+        historicalData={historicalData}
+        indicators={indicators}
+        onShowMenu={() => setShowCryptoMenu(true)}
+      />
+    );
+
   return (
-    <CryptoDisplay 
+    <CryptoDisplay
       data={data}
       ticker={currentTicker || getTicker(currentCrypto)}
       historicalData={historicalData}

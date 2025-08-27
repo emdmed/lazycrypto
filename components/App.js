@@ -10,6 +10,9 @@ import { writeJsonToFile } from "../utils/writeJsonFile.js";
 import os from "os";
 import path from "path";
 import fs from "fs/promises";
+import { getArgs } from "../utils/getArgs.js";
+import { setupZellijLayout } from "./CryptoData/terminals/zellij.js";
+import { setupTmuxLayout } from "./CryptoData/terminals/tmux.js";
 
 const clearTerminal = () => {
   console.clear();
@@ -17,22 +20,25 @@ const clearTerminal = () => {
 
 const App = () => {
   const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(false);
-  const [isTimeframeSelectorVisible, setIsTimeframeSelectorVisible] = useState(false);
+  const [isTimeframeSelectorVisible, setIsTimeframeSelectorVisible] =
+    useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [apiKey, setApiKey] = useState("");
   const [configData, setConfigData] = useState({});
   const [selectedTimeframe, setSelectedTimeframe] = useState("15min");
 
+  const { isMin } = getArgs();
+
   useInput((input, key) => {
     if (!isLoading && !isConfigPanelVisible && !isTimeframeSelectorVisible) {
-      if (input.toLowerCase() === 'c') {
+      if (input.toLowerCase() === "c") {
         setIsConfigPanelVisible(true);
       }
-      if (input.toLowerCase() === 't') {
+      if (input.toLowerCase() === "t") {
         setIsTimeframeSelectorVisible(true);
       }
     }
-    
+
     if (key.escape) {
       if (isConfigPanelVisible) {
         setIsConfigPanelVisible(false);
@@ -45,25 +51,31 @@ const App = () => {
 
   useEffect(() => {
     clearTerminal();
+
+     if (isMin) {
+       setupZellijLayout()
+       setupTmuxLayout();
+     }
+
     checkConfig();
-  }, []);
+  }, [isMin]);
 
   const checkConfig = async () => {
     const configDir = path.join(os.homedir(), ".config/lazycrypto");
     const filePath = path.join(configDir, "config.json");
-    
+
     try {
       const configData = await readJsonFromFile(filePath);
-      
+
       if (configData && configData.apiKey) {
         setApiKey(configData.apiKey);
         setConfigData(configData);
-        
+
         // Load saved timeframe if exists
         if (configData.timeframe) {
           setSelectedTimeframe(configData.timeframe);
         }
-        
+
         setIsLoading(false);
       } else {
         setIsConfigPanelVisible(true);
@@ -78,19 +90,19 @@ const App = () => {
   const handleApiKeySave = async (newApiKey) => {
     const configDir = path.join(os.homedir(), ".config/lazycrypto");
     const filePath = path.join(configDir, "config.json");
-    
+
     try {
       await fs.mkdir(configDir, { recursive: true });
-      
+
       const configData = {
         apiKey: newApiKey,
         timeframe: selectedTimeframe,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
-      
+
       await writeJsonToFile(configData, filePath);
-      
+
       setApiKey(newApiKey);
       setConfigData(configData);
       setIsConfigPanelVisible(false);
@@ -102,22 +114,21 @@ const App = () => {
   const handleTimeframeSelect = async (timeframe) => {
     const configDir = path.join(os.homedir(), ".config/lazycrypto");
     const filePath = path.join(configDir, "config.json");
-    
+
     try {
       const updatedConfig = {
         ...configData,
         timeframe: timeframe,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
-      
+
       await writeJsonToFile(updatedConfig, filePath);
-      
+
       setSelectedTimeframe(timeframe);
       setConfigData(updatedConfig);
       setIsTimeframeSelectorVisible(false);
     } catch (err) {
       console.error("Error saving timeframe config:", err);
-      // Still update the state even if save fails
       setSelectedTimeframe(timeframe);
       setIsTimeframeSelectorVisible(false);
     }
@@ -141,7 +152,7 @@ const App = () => {
 
   if (isLoading) {
     return (
-      <Box flexDirection="column" padding={1}>
+      <Box flexDirection="column" padding={isMin ? 0 : 1}>
         <Text color="cyan">Loading configuration...</Text>
       </Box>
     );
@@ -168,11 +179,12 @@ const App = () => {
   }
 
   return (
-    <Box flexDirection="column" padding={1}>
+    <Box flexDirection="column" padding={isMin ? 0 : 1}>
       <MultiCryptoDashboard
         apiKey={apiKey}
         selectedTimeframe={selectedTimeframe}
         onBack={handleBack}
+        isMinified={isMin}
       />
     </Box>
   );
