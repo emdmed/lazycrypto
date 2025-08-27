@@ -9,32 +9,59 @@ import {
 import RowVisualizer from "./visualizations/RowVisualizer.js";
 import RangeVisualizer from "./visualizations/RangeVisualizer.js";
 
-const RANGE_WIDTH = 16
+const RANGE_WIDTH = 16;
 
 const TechnicalIndicators = ({ indicators, data, historicalData }) => {
+  const isMin = process.argv[2] === "mini";
+
   return (
-    <Box width="100%" padding={0} flexDirection="column" marginTop={1}>
+    <Box
+      width="100%"
+      padding={0}
+      flexDirection={isMin ? "row" : "column"}
+      marginTop={1}
+    >
       <Box flexDirection="row" justifyContent="space-between">
         <Box flexDirection="row">
-          <Box marginLeft={0} marginRight={1}>
+          {isMin && (
+            <Box marginRight={1}>
+              <Text dimColor>RSI</Text>
+            </Box>
+          )}
+          {isMin && (
+            <Text
+              color={
+                indicators.rsi
+                  ? getIndicatorColor("rsi", getLatestValue(indicators.rsi))
+                  : "gray"
+              }
+            >
+              {formatIndicatorValue(indicators.rsi, 0)}
+            </Text>
+          )}
+          <Box marginLeft={isMin ? 1 : 0} marginRight={1}>
             <RowVisualizer
-              width={RANGE_WIDTH}
+              width={isMin ? 10 : RANGE_WIDTH}
               value={getLatestValue(indicators.rsi)}
               prevValue={getPrevValue(indicators.rsi)}
             />
           </Box>
-          <Box marginRight={1}>
-            <Text dimColor>RSI</Text>
-          </Box>
-          <Text
-            color={
-              indicators.rsi
-                ? getIndicatorColor("rsi", getLatestValue(indicators.rsi))
-                : "gray"
-            }
-          >
-            {formatIndicatorValue(indicators.rsi, 0)}
-          </Text>
+          {!isMin && (
+            <Box marginRight={1}>
+              <Text dimColor>RSI</Text>
+            </Box>
+          )}
+          {!isMin && (
+            <Text
+              color={
+                indicators.rsi
+                  ? getIndicatorColor("rsi", getLatestValue(indicators.rsi))
+                  : "gray"
+              }
+            >
+              {formatIndicatorValue(indicators.rsi, 0)}
+            </Text>
+          )}
         </Box>
       </Box>
 
@@ -51,10 +78,14 @@ const TechnicalIndicators = ({ indicators, data, historicalData }) => {
 
 const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
   const price = data.rate;
-
+  const isMin = process.argv[2] === "mini";
   return (
-    <Box flexDirection="column" marginTop={0}>
-      <Box flexDirection="column">
+    <Box
+      flexDirection={isMin ? "row" : "column"}
+      marginTop={0}
+      marginLeft={isMin ? 1 : 0}
+    >
+      <Box flexDirection={isMin ? "row" : "column"}>
         {indicators.bb && (
           <RangeVisualizer
             price={price}
@@ -62,13 +93,13 @@ const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
             upperBand={getLatestValue(indicators.bb.upper)}
             middleBand={getLatestValue(indicators.bb.middle)}
             lowerBand={getLatestValue(indicators.bb.lower)}
-            width={RANGE_WIDTH}
+            width={isMin ? 10 : RANGE_WIDTH}
             tag="BB"
           />
         )}
       </Box>
 
-      <Box flexDirection="column">
+      <Box flexDirection={isMin ? "row" : "column"}>
         {indicators.bb && (
           <RangeVisualizer
             tag="Min/Max"
@@ -81,7 +112,7 @@ const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
               2
             }
             lowerBand={getLatestValue(indicators.mmin)}
-            width={RANGE_WIDTH}
+            width={isMin ? 10 : RANGE_WIDTH}
           />
         )}
       </Box>

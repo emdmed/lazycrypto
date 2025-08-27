@@ -6,6 +6,7 @@ import updateNotifier from 'update-notifier';
 import { createRequire } from 'module';
 import App from './components/App.js';
 
+
 const require = createRequire(import.meta.url);
 const packageJson = require('./package.json');
 

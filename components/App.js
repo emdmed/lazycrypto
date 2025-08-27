@@ -22,7 +22,7 @@ const App = () => {
   const [apiKey, setApiKey] = useState("");
   const [configData, setConfigData] = useState({});
   const [selectedTimeframe, setSelectedTimeframe] = useState("15min");
-
+  
   useInput((input, key) => {
     if (!isLoading && !isConfigPanelVisible && !isTimeframeSelectorVisible) {
       if (input.toLowerCase() === 'c') {
