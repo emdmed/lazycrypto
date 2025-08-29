@@ -5,19 +5,20 @@ import { formatPrice, formatPercentage } from '../../utils/formatters/formatters
 const CryptoHeader = ({ data, ticker }) => {
   return (
     <Box justifyContent="space-between" width="100%">
-      <Box flexDirection="row">
+      <Box flexDirection="row" gap={1}>
         <Text bold color="cyan">
           {data.name || 'Unknown'}
         </Text>
         <Text color="white" marginLeft={1}>
           ({ticker})
         </Text>
-      </Box>
-      
-      <Box flexDirection="row">
         <Text bold color="yellow">
           {formatPrice(data.rate)}
         </Text>
+      </Box>
+      
+      <Box flexDirection="row">
+
         <Box flexDirection="row" marginLeft={2}>
           <Text dimColor>24h: </Text>
           {formatPercentage(data.delta?.day)}

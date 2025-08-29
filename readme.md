@@ -31,6 +31,19 @@ npx lazycrypto-cli@latest mini
 
 <img width="761" height="181" alt="image" src="https://github.com/user-attachments/assets/dc45248a-c619-4288-b6b2-68e9a43bb7fa" />
 
+### 3. Buy/Sell
+
+Lazucrypto has an integration with KuCoin API, you can set up your kucoin api key, api passphrase and api secret (stored locally in .config/lazycrypto).
+Press 'o' to open the order form.
+
+### WARNING !!!
+### WARNING !!!
+### WARNING !!!
+
+**Always use a sub account credentials, not your main one just to be safe**
+**If you are going to put your keys in some OSS take some time to investigate and/or review the code!**
+
+
 ## Supported Cryptocurrencies
 
 Currently configured cryptocurrencies:

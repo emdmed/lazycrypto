@@ -1,4 +1,3 @@
-// components/CryptoDisplay.js
 import React from "react";
 import { Box } from "ink";
 import CryptoHeader from "./CryptoHeader.js";

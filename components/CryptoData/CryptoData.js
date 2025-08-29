@@ -27,7 +27,6 @@ const CryptoData = ({
     loading,
     error,
     historicalData,
-    historicalLoading,
     indicators,
   } = useCryptoData(currentCrypto, apiKey, selectedTimeframe);
 
@@ -37,18 +36,6 @@ const CryptoData = ({
       setCurrentTicker(initialTicker);
     }
   }, [initialCrypto, initialTicker, currentCrypto]);
-
-  useInput((input, key) => {
-    if (!onBack) return;
-
-    if (input === "s" || input === "S") {
-      setShowCryptoMenu(!showCryptoMenu);
-    } else if (input === "b" || input === "B") {
-      onBack();
-    } else if (input === "q" || input === "Q" || (key.ctrl && input === "c")) {
-      process.exit(0);
-    }
-  });
 
   const handleCryptoSelect = (item) => {
     process.stdout.write("\x1B[2J\x1B[0f");

@@ -3,6 +3,8 @@ import { Box, Text, useInput } from "ink";
 import SelectInput from "ink-select-input";
 import CryptoData from "./CryptoData/CryptoData.js";
 import { getArgs } from "../utils/getArgs.js";
+import { expandPanelZellij, contractPanelZellij } from "./CryptoData/terminals/zellij.js";
+import { expandPanelTMUX, contractPanelTMUX } from "./CryptoData/terminals/tmux.js";
 
 const availableCryptos = [
   { label: "Bitcoin (BTC)", value: "bitcoin", ticker: "BTC" },
@@ -14,16 +16,22 @@ const availableCryptos = [
   { label: "Chainlink (LINK)", value: "chainlink", ticker: "LINK" },
 ];
 
+const expandTerminal = (lines) => {
+  expandPanelZellij(lines)
+  expandPanelTMUX(lines)
+}
+
+const contractTerminal = (lines) => {
+  contractPanelZellij(6)
+  contractPanelTMUX(6)
+}
+
 const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
-  const [selectedCryptos, setSelectedCryptos] = useState([
-    "bitcoin",
-    "monero",
-  ]);
+  const [selectedCryptos, setSelectedCryptos] = useState(["bitcoin", "monero", "cardano"]);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
-  
-  const { isMin } = getArgs(); 
-  
+
+  const { isMin } = getArgs();
 
   useEffect(() => {
     process.stdout.write("\x1B[2J\x1B[0f");
@@ -31,11 +39,13 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
 
   useInput((input, key) => {
     if (input === "s" || input === "S") {
-      setShowCryptoMenu(!showCryptoMenu);
+      expandTerminal(6)
+      console.clear()
+      setTimeout(() => {
+        setShowCryptoMenu(!showCryptoMenu);
+      }, 200)
     } else if (input === "r" || input === "R") {
-      setRefreshKey((prev) => prev + 1); 
-    } else if (input === "b" || input === "B") {
-      onBack();
+      setRefreshKey((prev) => prev + 1);
     } else if (input === "q" || input === "Q" || (key.ctrl && input === "c")) {
       process.exit(0);
     }
@@ -61,6 +71,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
 
   const handleMenuSelect = (item) => {
     if (item.value === "done") {
+      contractTerminal(6)
       setShowCryptoMenu(false);
     } else {
       handleCryptoSelect(item);
@@ -94,7 +105,8 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
       <Box flexDirection="column">
         <Box marginBottom={1}>
           <Text bold color="cyan">
-            LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh: 15min
+            LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh:
+            15min
           </Text>
         </Box>
         <Text color="yellow">No cryptocurrencies selected.</Text>
@@ -107,22 +119,27 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
 
   return (
     <Box flexDirection="column">
-      {!isMin && <Box marginBottom={1} justifyContent="space-between">
-        <Text bold color="cyan">
-          LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh: 15min
-        </Text>
-        <Text dimColor>{new Date().toLocaleTimeString()}</Text>
-      </Box>}
+      {!isMin && (
+        <Box marginBottom={1} justifyContent="space-between">
+          <Text bold color="cyan">
+            LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh:
+            15min
+          </Text>
+          <Text dimColor>{new Date().toLocaleTimeString()}</Text>
+        </Box>
+      )}
 
       {selectedCryptos.length > 0 ? (
         selectedCryptos.map((cryptoId, index) => {
           const ticker = getTickerForCrypto(cryptoId);
           return (
-            <Box
-              key={`${cryptoId}-${index}-${refreshKey}`}
-              marginBottom={index < selectedCryptos.length - 1 ? 1 : 0}
-            >
-              <CryptoData crypto={cryptoId} ticker={ticker} apiKey={apiKey} selectedTimeframe={selectedTimeframe} />
+            <Box key={`${cryptoId}-${index}-${refreshKey}`}>
+              <CryptoData
+                crypto={cryptoId}
+                ticker={ticker}
+                apiKey={apiKey}ao
+                selectedTimeframe={selectedTimeframe}
+              />
             </Box>
           );
         })
@@ -130,12 +147,12 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
         <Text color="yellow">Loading cryptocurrencies...</Text>
       )}
 
-      {/* Footer with controls */}
-      {!isMin && <Box marginTop={1} flexDirection="column">
+      <Box flexDirection="column">
         <Text dimColor>
-          'S' select cryptos | 'R' refresh | 'T' timeframe selection | 'C' config | 'Q' quit
+          'S' cryptos | 'O' order | 'R' refresh | 'T' timeframe | 'C'
+          config
         </Text>
-      </Box>}
+      </Box>
     </Box>
   );
 };

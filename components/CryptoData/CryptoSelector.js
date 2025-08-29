@@ -1,4 +1,3 @@
-// components/CryptoSelector.js
 import React from 'react';
 import { Box, Text } from 'ink';
 import SelectInput from 'ink-select-input';

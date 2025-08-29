@@ -10,10 +10,6 @@ const isRunningInZellij = () => {
 
 export const setupZellijLayout = () => {
   if (!isRunningInZellij()) {
-    console.warn(
-      "Warning: isMin parameter requires running inside zellij terminal multiplexer",
-    );
-    console.warn("Please start zellij first: zellij");
     return;
   }
 
@@ -26,12 +22,26 @@ export const setupZellijLayout = () => {
 
     execSync("zellij action move-focus up", { stdio: "ignore" });
 
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 2; i++) {
       execSync("zellij action resize -", { stdio: "ignore" });
     }
 
     execSync("zellij action move-focus down", { stdio: "ignore" });
   } catch (error) {
     console.error("Failed to setup zellij layout:", error.message);
+  }
+};
+
+export const expandPanelZellij = (times) => {
+  if (!isRunningInZellij()) return;
+  for (let i = 0; i < times; i++) {
+    execSync("zellij action resize +", { stdio: "ignore" });
+  }
+};
+
+export const contractPanelZellij = (times) => {
+  if (!isRunningInZellij()) return;
+  for (let i = 0; i < times; i++) {
+    execSync("zellij action resize -", { stdio: "ignore" });
   }
 };

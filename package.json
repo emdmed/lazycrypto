@@ -1,7 +1,6 @@
-
 {
   "name": "lazycrypto-cli",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A simple CLI app to view cryptocurrency indicators",
   "type": "module",
   "main": "index.js",
@@ -9,22 +8,26 @@
     "lazycrypto": "./dist/index.js"
   },
   "scripts": {
-    "build": "babel . --out-dir dist --extensions .js,.jsx --ignore '**/node_modules/**,**/dist/**'  && cp package.json dist/",
+    "build": "babel . --out-dir dist --extensions .js,.jsx --ignore '**/node_modules/**,**/dist/**' && cp package.json dist/",
     "start": "npm run build && node dist/index.js",
-    "dev": "babel src --out-dir dist --extensions .js,.jsx --watch"
+    "dev": "babel . --out-dir dist --extensions .js,.jsx --ignore '**/node_modules/**,**/dist/**' --watch"
   },
   "dependencies": {
-    "axios": "^1.6.2",
-    "dotenv": "^17.2.1",
+    "axios": "^1.7.7",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.5",
     "indicatorts": "^2.2.2",
-    "ink": "^4.4.1",
-    "ink-select-input": "^5.0.0",
+    "ink": "^5.0.1",
+    "ink-select-input": "^6.0.0",
     "ink-spinner": "^5.0.0",
-    "react": "^18.2.0",
-    "update-notifier": "^7.3.1"
+    "ink-text-input": "^6.0.0",
+    "luxon": "^3.5.0",
+    "react": "^18.3.1",
+    "update-notifier": "^7.3.1",
+    "uuid": "^10.0.0"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "keywords": [
     "crypto",
@@ -36,8 +39,8 @@
   "author": "Your Name",
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.28.3",
-    "@babel/core": "^7.28.3",
-    "@babel/preset-react": "^7.27.1"
+    "@babel/cli": "^7.25.9",
+    "@babel/core": "^7.26.0",
+    "@babel/preset-react": "^7.25.9"
   }
 }
