@@ -13,13 +13,13 @@ const LoadingSpinner = ({ ticker }) => {
       borderStyle={isMin ? null : "round"}
       borderColor={isMin ? null : "gray"}
       padding={isMin ? 0 : 1}
-      justifyContent="center"
+      justifyContent={isMin ? "flex-start" : "center"}
     >
-      <Box flexDirection="row">
-        <Spinner type="dots" />
-        <Text color="yellow" marginLeft={1}>
+      <Box flexDirection="row" gap={1}>
+        <Text marginLeft={1}>
           {ticker}
         </Text>
+        <Spinner type="dots" />
       </Box>
     </Box>
   );

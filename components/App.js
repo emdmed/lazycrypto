@@ -5,14 +5,23 @@ import { Box, Text, useInput } from "ink";
 import MultiCryptoDashboard from "./MultiCryptoDashboard.js";
 import ConfigPanel from "./ConfigPanel.js";
 import TimeframeSelector from "./TimeframeSelector.js";
+import OrderPanel from "./OrderPanel.js";
 import { readJsonFromFile } from "../utils/readJsonFile.js";
 import { writeJsonToFile } from "../utils/writeJsonFile.js";
 import os from "os";
 import path from "path";
 import fs from "fs/promises";
 import { getArgs } from "../utils/getArgs.js";
-import { setupZellijLayout } from "./CryptoData/terminals/zellij.js";
-import { setupTmuxLayout } from "./CryptoData/terminals/tmux.js";
+import {
+  setupZellijLayout,
+  expandPanelZellij,
+  contractPanelZellij,
+} from "./CryptoData/terminals/zellij.js";
+import {
+  contractPanelTMUX,
+  expandPanelTMUX,
+  setupTmuxLayout,
+} from "./CryptoData/terminals/tmux.js";
 
 const clearTerminal = () => {
   console.clear();
@@ -22,29 +31,67 @@ const App = () => {
   const [isConfigPanelVisible, setIsConfigPanelVisible] = useState(false);
   const [isTimeframeSelectorVisible, setIsTimeframeSelectorVisible] =
     useState(false);
+  const [isOrderPanelVisible, setIsOrderPanelVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [apiKey, setApiKey] = useState("");
+  const [apiSecret, setApiSecret] = useState("");
+  const [apiPassphrase, setApiPassphrase] = useState("");
   const [configData, setConfigData] = useState({});
   const [selectedTimeframe, setSelectedTimeframe] = useState("15min");
+  const [currentSymbol, setCurrentSymbol] = useState("BTC-USDT");
 
   const { isMin } = getArgs();
 
+  const expandTerminal = (lines) => {
+    expandPanelZellij(lines);
+    expandPanelTMUX(lines);
+  };
+
+  const contractTerminal = (lines) => {
+    contractPanelZellij(lines);
+    contractPanelTMUX(lines);
+  };
+
   useInput((input, key) => {
-    if (!isLoading && !isConfigPanelVisible && !isTimeframeSelectorVisible) {
+    if (
+      !isLoading &&
+      !isConfigPanelVisible &&
+      !isTimeframeSelectorVisible &&
+      !isOrderPanelVisible
+    ) {
       if (input.toLowerCase() === "c") {
-        setIsConfigPanelVisible(true);
+        expandTerminal(3);
+        setTimeout(() => {
+          setIsConfigPanelVisible(true);
+        }, 200);
       }
       if (input.toLowerCase() === "t") {
-        setIsTimeframeSelectorVisible(true);
+        expandTerminal(3);
+        console.clear();
+        setTimeout(() => {
+          setIsTimeframeSelectorVisible(true);
+        }, 200);
+      }
+      if (input.toLowerCase() === "o") {
+        if (apiSecret && apiPassphrase) {
+          setIsOrderPanelVisible(true);
+        } else {
+          setIsConfigPanelVisible(true);
+        }
       }
     }
 
     if (key.escape) {
+      contractTerminal(6);
+
       if (isConfigPanelVisible) {
         setIsConfigPanelVisible(false);
       }
       if (isTimeframeSelectorVisible) {
         setIsTimeframeSelectorVisible(false);
+      }
+      if (isOrderPanelVisible) {
+        setIsOrderPanelVisible(false);
       }
     }
   });
@@ -52,10 +99,10 @@ const App = () => {
   useEffect(() => {
     clearTerminal();
 
-     if (isMin) {
-       setupZellijLayout()
-       setupTmuxLayout();
-     }
+    if (isMin) {
+      setupZellijLayout();
+      setupTmuxLayout();
+    }
 
     checkConfig();
   }, [isMin]);
@@ -69,11 +116,17 @@ const App = () => {
 
       if (configData && configData.apiKey) {
         setApiKey(configData.apiKey);
+
+        setApiSecret(configData.kucoinApiSecret || "");
+        setApiPassphrase(configData.kucoinApiPassphrase || "");
         setConfigData(configData);
 
-        // Load saved timeframe if exists
         if (configData.timeframe) {
           setSelectedTimeframe(configData.timeframe);
+        }
+
+        if (configData.currentSymbol) {
+          setCurrentSymbol(configData.currentSymbol);
         }
 
         setIsLoading(false);
@@ -87,24 +140,35 @@ const App = () => {
     }
   };
 
-  const handleApiKeySave = async (newApiKey) => {
+  const handleApiKeySave = async (credentials) => {
     const configDir = path.join(os.homedir(), ".config/lazycrypto");
     const filePath = path.join(configDir, "config.json");
 
     try {
       await fs.mkdir(configDir, { recursive: true });
 
-      const configData = {
-        apiKey: newApiKey,
+      const newConfigData = {
+        apiKey:
+          typeof credentials === "string" ? credentials : credentials.apiKey,
+
+        ...(credentials.kucoinApiKey && {
+          kucoinApiKey: credentials.kucoinApiKey,
+          kucoinApiSecret: credentials.kucoinApiSecret,
+          kucoinApiPassphrase: credentials.kucoinApiPassphrase,
+        }),
+
         timeframe: selectedTimeframe,
-        createdAt: new Date().toISOString(),
+        currentSymbol: currentSymbol,
+        createdAt: configData.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
 
-      await writeJsonToFile(configData, filePath);
+      await writeJsonToFile(newConfigData, filePath);
 
-      setApiKey(newApiKey);
-      setConfigData(configData);
+      setApiKey(newConfigData.apiKey);
+      setApiSecret(newConfigData.kucoinApiSecret || "");
+      setApiPassphrase(newConfigData.kucoinApiPassphrase || "");
+      setConfigData(newConfigData);
       setIsConfigPanelVisible(false);
     } catch (err) {
       console.error("Error saving config:", err);
@@ -134,6 +198,26 @@ const App = () => {
     }
   };
 
+  const handleSymbolChange = async (symbol) => {
+    const configDir = path.join(os.homedir(), ".config/lazycrypto");
+    const filePath = path.join(configDir, "config.json");
+
+    setCurrentSymbol(symbol);
+
+    try {
+      const updatedConfig = {
+        ...configData,
+        currentSymbol: symbol,
+        updatedAt: new Date().toISOString(),
+      };
+
+      await writeJsonToFile(updatedConfig, filePath);
+      setConfigData(updatedConfig);
+    } catch (err) {
+      console.error("Error saving symbol config:", err);
+    }
+  };
+
   const handleConfigCancel = () => {
     if (apiKey) {
       setIsConfigPanelVisible(false);
@@ -144,6 +228,10 @@ const App = () => {
 
   const handleTimeframeSelectorCancel = () => {
     setIsTimeframeSelectorVisible(false);
+  };
+
+  const handleOrderPanelClose = () => {
+    setIsOrderPanelVisible(false);
   };
 
   const handleBack = () => {
@@ -164,6 +252,7 @@ const App = () => {
         onSave={handleApiKeySave}
         onCancel={handleConfigCancel}
         configData={configData}
+        includeTrading={true}
       />
     );
   }
@@ -178,12 +267,44 @@ const App = () => {
     );
   }
 
+  if (isOrderPanelVisible) {
+    if (!apiSecret || !apiPassphrase) {
+      return (
+        <Box
+          flexDirection="column"
+          padding={1}
+          borderStyle="round"
+          borderColor="red"
+        >
+          <Text color="red">⚠ Trading credentials not configured</Text>
+          <Text color="yellow">
+            Press 'c' to configure API credentials with trading permissions
+          </Text>
+          <Text color="gray" dimColor>
+            Press ESC to go back
+          </Text>
+        </Box>
+      );
+    }
+
+    return (
+      <OrderPanel
+        apiKey={apiKey}
+        apiSecret={apiSecret}
+        apiPassphrase={apiPassphrase}
+        onClose={handleOrderPanelClose}
+        currentSymbol={currentSymbol}
+      />
+    );
+  }
+
   return (
     <Box flexDirection="column" padding={isMin ? 0 : 1}>
       <MultiCryptoDashboard
         apiKey={apiKey}
         selectedTimeframe={selectedTimeframe}
         onBack={handleBack}
+        onSymbolChange={handleSymbolChange}
         isMinified={isMin}
       />
     </Box>

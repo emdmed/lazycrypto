@@ -8,6 +8,7 @@ const TimeframeSelector = ({ currentTimeframe, onSelect, onCancel }) => {
     { value: "1hour", label: "1 hour" },
     { value: "4hour", label: "4 hours"}
   ];
+  
 
   const [selectedIndex, setSelectedIndex] = useState(() => {
     const index = timeframes.findIndex(tf => tf.value === currentTimeframe);

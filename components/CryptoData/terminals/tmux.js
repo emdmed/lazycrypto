@@ -10,27 +10,32 @@ const isRunningInTmux = () => {
 
 export const setupTmuxLayout = () => {
   if (!isRunningInTmux()) {
-    console.warn(
-      "Warning: isMin parameter requires running inside tmux terminal multiplexer"
-    );
-    console.warn("Please start tmux first: tmux");
     return;
   }
 
   try {
     const currentDir = process.cwd();
-    
+
     execSync(`tmux split-window -v -c "${currentDir}"`, {
       stdio: "ignore",
     });
-    
+
     execSync("tmux select-pane -U", { stdio: "ignore" });
-    
+
     execSync("tmux resize-pane -y 3", { stdio: "ignore" });
-    
+
     execSync("tmux select-pane -D", { stdio: "ignore" });
-    
   } catch (error) {
     console.error("Failed to setup tmux layout:", error.message);
   }
+};
+
+export const expandPanelTMUX = (times) => {
+  if (!isRunningInTmux()) return;
+  execSync(`tmux resize-pane -U ${lines}`, { stdio: "ignore" });
+};
+
+export const contractPanelTMUX = (times) => {
+  if (!isRunningInTmux()) return;
+  execSync(`tmux resize-pane -D ${lines}`, { stdio: "ignore" });
 };

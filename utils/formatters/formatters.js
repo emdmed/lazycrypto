@@ -1,9 +1,8 @@
-// utils/formatters.js
 import React from 'react';
 import { Text } from 'ink';
 
 export const formatPrice = (price) => {
-  return `$${price.toLocaleString("ES", {
+  return `$${Number(price).toLocaleString("en", {
     maximumFractionDigits: 2
   })}`;
 };
@@ -11,7 +10,6 @@ export const formatPrice = (price) => {
 export const formatPercentage = (delta) => {
   if (!delta) return React.createElement(Text, { color: 'gray' }, '0.0%');
   
-  // Convert LiveCoinWatch delta format (1 = no change) to percentage
   const percentage = (delta - 1) * 100;
   const color = percentage >= 0 ? 'green' : 'red';
   const sign = percentage >= 0 ? '+' : '';
