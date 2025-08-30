@@ -7,7 +7,7 @@ const ConfigPanel = ({
   configData,
   includeTrading = false,
 }) => {
-  const [apiKey, setApiKey] = useState(""); // LiveCoinWatch
+  const [apiKey, setApiKey] = useState("");
   const [kucoinApiKey, setKucoinApiKey] = useState("");
   const [kucoinApiSecret, setKucoinApiSecret] = useState("");
   const [kucoinApiPassphrase, setKucoinApiPassphrase] = useState("");
@@ -42,11 +42,9 @@ const ConfigPanel = ({
 
     if (key.return) {
       if (includeTrading && currentField < fields.length - 1) {
-        // Move to next field
         setCurrentField(currentField + 1);
         setError("");
       } else {
-        // Save configuration
         handleSave();
       }
       return;
@@ -178,21 +176,6 @@ const ConfigPanel = ({
         {isActive && <Text color="cyan">█</Text>}
       </Box>
     );
-  };
-
-  const getFieldLabel = (fieldName) => {
-    switch (fieldName) {
-      case "apiKey":
-        return "LiveCoinWatch API Key";
-      case "kucoinApiKey":
-        return "KuCoin API Key";
-      case "kucoinApiSecret":
-        return "KuCoin API Secret";
-      case "kucoinApiPassphrase":
-        return "KuCoin API Passphrase";
-      default:
-        return fieldName;
-    }
   };
 
   return (
