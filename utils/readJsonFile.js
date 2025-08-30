@@ -7,7 +7,6 @@ export const readJsonFromFile = async (filePath) => {
         return JSON.parse(jsonData);
     } catch (err) {
         if (err.code === 'ENOENT') {
-            console.error(`File not found: ${filePath}`);
             return null;
         }
         if (err instanceof SyntaxError) {
