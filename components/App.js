@@ -5,7 +5,7 @@ import { Box, Text, useInput } from "ink";
 import MultiCryptoDashboard from "./MultiCryptoDashboard.js";
 import ConfigPanel from "./ConfigPanel.js";
 import TimeframeSelector from "./TimeframeSelector.js";
-import OrderPanel from "./OrderPanel.js";
+import OrderPanel from "./CryptoData/orderPanel/OrderPanel.js";
 import { readJsonFromFile } from "../utils/readJsonFile.js";
 import { writeJsonToFile } from "../utils/writeJsonFile.js";
 import os from "os";

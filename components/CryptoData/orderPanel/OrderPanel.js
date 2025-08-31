@@ -1,21 +1,15 @@
-
 import React, { useState, useEffect } from "react";
 import { Box, Text, useInput } from "ink";
 import TextInput from "ink-text-input";
 import SelectInput from "ink-select-input";
 import Spinner from "ink-spinner";
-import { exchanges } from "../exchanges/exchanges.js";
-import {
-  contractPanelZellij,
-  expandPanelZellij,
-} from "./CryptoData/terminals/zellij.js";
-import {
-  contractPanelTMUX,
-  expandPanelTMUX,
-} from "./CryptoData/terminals/tmux.js";
-import { getArgs } from "../utils/getArgs.js";
-import { formatPrice } from "../utils/formatters/formatters.js";
-import { cryptoOptions } from "../constants/cryptoOptions.js";
+import { exchanges } from "../../../exchanges/exchanges.js";
+import { contractPanelZellij, expandPanelZellij } from "../terminals/zellij.js";
+import { contractPanelTMUX, expandPanelTMUX } from "../terminals/tmux.js";
+import { getArgs } from "../../../utils/getArgs.js";
+import { formatPrice } from "../../../utils/formatters/formatters.js";
+import { cryptoOptions } from "../../../constants/cryptoOptions.js";
+import { saveOrder } from "./SaveOrder.js";
 
 const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
   const [step, setStep] = useState("selectPair");
@@ -28,7 +22,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
   const [availableBalance, setAvailableBalance] = useState(null);
   const [symbolInfo, setSymbolInfo] = useState(null);
   const [currentPrice, setCurrentPrice] = useState(null);
-  const [pairs, setPairs] = useState([])
+  const [pairs, setPairs] = useState([]);
   const { isMin } = getArgs();
 
   useEffect(() => {
@@ -64,13 +58,13 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
   });
 
   useEffect(() => {
-    const allPairs = cryptoOptions.map(element => {
-      element.pair = `${element.ticker}-USDT`
-      return element
-    })
-    
-    setPairs(allPairs)
-  }, [cryptoOptions])
+    const allPairs = cryptoOptions.map((element) => {
+      element.pair = `${element.ticker}-USDT`;
+      return element;
+    });
+
+    setPairs(allPairs);
+  }, [cryptoOptions]);
 
   useEffect(() => {
     if (selectedPair) {
@@ -79,7 +73,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
       fetchBalance();
     }
   }, [selectedPair, orderSide]);
-  
+
   const fetchSymbolInfo = async () => {
     try {
       setError("");
@@ -110,7 +104,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
       const currency =
         orderSide === "buy" ? "USDT" : selectedPair.split("-")[0];
 
-      const balance = await exchanges.kucoin.getBalance(currency)
+      const balance = await exchanges.kucoin.getBalance(currency);
       setAvailableBalance(balance || 0);
     } catch (err) {
       setError("Failed to fetch balance");
@@ -138,9 +132,20 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
       );
 
       if (result && result.data && result.data.orderId) {
+        const orderDetailsResponse = await exchanges.kucoin.getOrderDetailsById(
+          result.data.orderId,
+        );
+
         setSuccess(
           `Order placed successfully! Order ID: ${result.data.orderId}`,
         );
+
+        saveOrder({
+          orderDetails: orderDetailsResponse,
+          currentPrice,
+          pair: selectedPair,
+          exchange: "kucoin",
+        });
       } else {
         setError("Failed to place order - no order ID returned");
       }
@@ -259,7 +264,9 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
           <Text color="yellow">
             {orderSide === "buy" ? "Buying" : "Selling"} {selectedPair}
           </Text>
-          {currentPrice && <Text>Current Price: {formatPrice(currentPrice)} USDT</Text>}
+          {currentPrice && (
+            <Text>Current Price: {formatPrice(currentPrice)} USDT</Text>
+          )}
           {availableBalance !== null && (
             <Text>
               Available: {availableBalance.toFixed(4)}{" "}
