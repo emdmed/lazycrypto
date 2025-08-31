@@ -4,8 +4,7 @@ import { Box, Text, useInput } from "ink";
 import TextInput from "ink-text-input";
 import SelectInput from "ink-select-input";
 import Spinner from "ink-spinner";
-import axios from "axios";
-import kucoin from "../exchanges/kucoin.js";
+import { exchanges } from "../exchanges/exchanges.js";
 import {
   contractPanelZellij,
   expandPanelZellij,
@@ -16,6 +15,7 @@ import {
 } from "./CryptoData/terminals/tmux.js";
 import { getArgs } from "../utils/getArgs.js";
 import { formatPrice } from "../utils/formatters/formatters.js";
+import { cryptoOptions } from "../constants/cryptoOptions.js";
 
 const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
   const [step, setStep] = useState("selectPair");
@@ -28,9 +28,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
   const [availableBalance, setAvailableBalance] = useState(null);
   const [symbolInfo, setSymbolInfo] = useState(null);
   const [currentPrice, setCurrentPrice] = useState(null);
-  const [pairs, setPairs] = useState([]);
-
-  const baseUrl = "https://api.kucoin.com";
+  const [pairs, setPairs] = useState([])
   const { isMin } = getArgs();
 
   useEffect(() => {
@@ -66,8 +64,13 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
   });
 
   useEffect(() => {
-    fetchTradingPairs();
-  }, []);
+    const allPairs = cryptoOptions.map(element => {
+      element.pair = `${element.ticker}-USDT`
+      return element
+    })
+    
+    setPairs(allPairs)
+  }, [cryptoOptions])
 
   useEffect(() => {
     if (selectedPair) {
@@ -76,51 +79,11 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
       fetchBalance();
     }
   }, [selectedPair, orderSide]);
-
-  const availableCryptos = [
-    { label: "Bitcoin (BTC)", value: "bitcoin", ticker: "BTC" },
-    { label: "Monero (XMR)", value: "monero", ticker: "XMR" },
-    { label: "Ethereum (ETH)", value: "ethereum", ticker: "ETH" },
-    { label: "Cardano (ADA)", value: "cardano", ticker: "ADA" },
-    { label: "Solana (SOL)", value: "solana", ticker: "SOL" },
-    { label: "Polygon (MATIC)", value: "matic-network", ticker: "MATIC" },
-    { label: "Chainlink (LINK)", value: "chainlink", ticker: "LINK" },
-  ];
-
-  const fetchTradingPairs = async () => {
-    try {
-      const response = await axios.get(`${baseUrl}/api/v1/symbols`);
-      const availableTickers = availableCryptos.map((crypto) => crypto.ticker);
-
-      const filteredPairs = response.data.data
-        .filter((s) => {
-          const ticker = s.symbol.split("-")[0];
-          return (
-            s.enableTrading &&
-            s.symbol.endsWith("-USDT") &&
-            availableTickers.includes(ticker)
-          );
-        })
-        .map((s) => ({
-          label: s.symbol,
-          value: s.symbol,
-        }));
-
-      setPairs(filteredPairs);
-    } catch (err) {
-      console.error("Error fetching pairs:", err);
-      const fallbackPairs = availableCryptos.map((crypto) => ({
-        label: `${crypto.ticker}-USDT`,
-        value: `${crypto.ticker}-USDT`,
-      }));
-      setPairs(fallbackPairs);
-    }
-  };
-
+  
   const fetchSymbolInfo = async () => {
     try {
       setError("");
-      const symbolParams = await kucoin.getSymbolParams(selectedPair);
+      const symbolParams = await exchanges.kucoin.getSymbolParams(selectedPair);
       if (symbolParams) {
         setSymbolInfo(symbolParams);
       } else {
@@ -134,7 +97,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
 
   const fetchCurrentPrice = async () => {
     try {
-      const priceData = await kucoin.fetchCurrentPrice(selectedPair);
+      const priceData = await exchanges.kucoin.getPrice(selectedPair);
       const price = orderSide === "buy" ? priceData.bestAsk : priceData.bestBid;
       setCurrentPrice(price);
     } catch (err) {
@@ -147,7 +110,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
       const currency =
         orderSide === "buy" ? "USDT" : selectedPair.split("-")[0];
 
-      const balance = await kucoin.getAccountBalance(currency);
+      const balance = await exchanges.kucoin.getBalance(currency)
       setAvailableBalance(balance || 0);
     } catch (err) {
       setError("Failed to fetch balance");
@@ -166,7 +129,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
     }
 
     try {
-      const result = await kucoin.placeOrder(
+      const result = await exchanges.kucoin.placeOrder(
         orderSide,
         currentPrice,
         parseFloat(amount),
@@ -189,7 +152,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
   };
 
   const handlePairSelect = (item) => {
-    setSelectedPair(item.value);
+    setSelectedPair(item.pair);
     setStep("selectSide");
   };
 

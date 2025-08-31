@@ -5,16 +5,7 @@ import CryptoData from "./CryptoData/CryptoData.js";
 import { getArgs } from "../utils/getArgs.js";
 import { expandPanelZellij, contractPanelZellij } from "./CryptoData/terminals/zellij.js";
 import { expandPanelTMUX, contractPanelTMUX } from "./CryptoData/terminals/tmux.js";
-
-const availableCryptos = [
-  { label: "Bitcoin (BTC)", value: "bitcoin", ticker: "BTC" },
-  { label: "Monero (XMR)", value: "monero", ticker: "XMR" },
-  { label: "Ethereum (ETH)", value: "ethereum", ticker: "ETH" },
-  { label: "Cardano (ADA)", value: "cardano", ticker: "ADA" },
-  { label: "Solana (SOL)", value: "solana", ticker: "SOL" },
-  { label: "Polygon (MATIC)", value: "matic-network", ticker: "MATIC" },
-  { label: "Chainlink (LINK)", value: "chainlink", ticker: "LINK" },
-];
+import { cryptoOptions } from "../constants/cryptoOptions.js";
 
 const expandTerminal = (lines) => {
   expandPanelZellij(lines)
@@ -60,7 +51,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
     }
   };
 
-  const cryptoMenuItems = availableCryptos
+  const cryptoMenuItems = cryptoOptions
     .map((crypto) => ({
       ...crypto,
       label: selectedCryptos.includes(crypto.value)
@@ -79,7 +70,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
   };
 
   const getTickerForCrypto = (cryptoId) => {
-    const crypto = availableCryptos.find((c) => c.value === cryptoId);
+    const crypto = cryptoOptions.find((c) => c.value === cryptoId);
     return crypto ? crypto.ticker : cryptoId.toUpperCase();
   };
 
