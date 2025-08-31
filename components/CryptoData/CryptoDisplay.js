@@ -18,13 +18,23 @@ const CryptoDisplay = ({
       <Box
         width="100%"
         minWidth="100%"
-        borderStyle="round"
+        borderStyle="single"
         borderColor="cyan"
-        padding={1}
+        borderDimColor={true}
+        borderTop={false}
+        borderLeft={false}
+        borderRight={false}
+        paddingBottom={1}
+        marginBottom={1}
         flexDirection="column"
       >
         <CryptoHeader data={data} ticker={ticker} />
-        <Box width="100%" flexDirection="row" justifyContent="space-between" alignItems="center">
+        <Box
+          width="100%"
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           {indicators && (
             <TechnicalIndicators
               indicators={indicators}

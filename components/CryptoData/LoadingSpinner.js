@@ -10,8 +10,11 @@ const LoadingSpinner = ({ ticker }) => {
     <Box
       width="100%"
       minWidth={60}
-      borderStyle={isMin ? null : "round"}
+      borderStyle={isMin ? null : "single"}
       borderColor={isMin ? null : "gray"}
+      borderLeft={false}
+      borderRight={false}
+      borderTop={false}
       padding={isMin ? 0 : 1}
       justifyContent={isMin ? "flex-start" : "center"}
     >
