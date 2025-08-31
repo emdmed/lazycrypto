@@ -18,7 +18,7 @@ const contractTerminal = (lines) => {
 }
 
 const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
-  const [selectedCryptos, setSelectedCryptos] = useState(["bitcoin", "monero", "cardano"]);
+  const [selectedCryptos, setSelectedCryptos] = useState(["bitcoin", "monero", "solana", "sui"]);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 

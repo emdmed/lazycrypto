@@ -31,7 +31,7 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
     const cryptoInfo = cryptoOptions.find(
       (option) => option.value === cryptoId,
     );
-    const symbol = cryptoInfo ? cryptoInfo.apiCode : cryptoId.toUpperCase();
+    const symbol = cryptoInfo ? cryptoInfo.ticker : cryptoId.toUpperCase();
 
     if (symbol === "BTC") return "BTC-USDT";
     if (symbol === "ETH") return "ETH-USDT";
@@ -51,7 +51,6 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
 
       const kuCoinSymbol = getKuCoinSymbol(currentCrypto);
       const now = Math.floor(Date.now() / 1000);
-      //adapt start to timeframe selected we need at least 100 periods
       const hoursAgo = now - (TIMEFRAMES_START_DATE_FACTOR[selectedTimeframe] || 102) * 60 * 60;
 
       const klineResponse = await axios.get(
