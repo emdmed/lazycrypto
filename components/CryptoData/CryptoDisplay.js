@@ -1,9 +1,10 @@
 import React from "react";
-import { Box } from "ink";
+import { Box, Text } from "ink";
 import CryptoHeader from "./CryptoHeader.js";
 import CryptoControls from "./CryptoControls.js";
 import TechnicalIndicators from "./TechnicalIndicators.js";
 import VolumeIndicators from "./VolumeIndicators.js";
+import CryptoOrders from "./CryptoOrders.js";
 
 const CryptoDisplay = ({
   data,
@@ -13,6 +14,8 @@ const CryptoDisplay = ({
   indicators,
   onShowMenu,
 }) => {
+
+
   return (
     <Box flexDirection="column">
       <Box
@@ -20,7 +23,6 @@ const CryptoDisplay = ({
         minWidth="100%"
         borderStyle="single"
         borderColor="cyan"
-        borderDimColor={true}
         borderTop={false}
         borderLeft={false}
         borderRight={false}
@@ -29,6 +31,7 @@ const CryptoDisplay = ({
         flexDirection="column"
       >
         <CryptoHeader data={data} ticker={ticker} />
+
         <Box
           width="100%"
           flexDirection="row"
@@ -50,6 +53,7 @@ const CryptoDisplay = ({
           indicators={indicators}
           onShowMenu={onShowMenu}
         />
+        <CryptoOrders ticker={ticker} historicalData={historicalData}/>
       </Box>
     </Box>
   );

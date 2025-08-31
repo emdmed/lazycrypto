@@ -307,7 +307,6 @@ async function getKucoinTradingBalanceInUSDT() {
 }
 
 async function getOrderDetailsById(orderId) {
-  console.log("orderId", orderId)
     const credentials = await loadCredentials();
     const timestamp = Date.now().toString();
     const method = 'GET';

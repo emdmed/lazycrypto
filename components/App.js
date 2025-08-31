@@ -22,6 +22,7 @@ import {
   expandPanelTMUX,
   setupTmuxLayout,
 } from "./CryptoData/terminals/tmux.js";
+import { useGetOrders } from "./CryptoData/hooks/useGetOrders.js";
 
 const clearTerminal = () => {
   console.clear();
@@ -41,7 +42,7 @@ const App = () => {
   const [currentSymbol, setCurrentSymbol] = useState("BTC-USDT");
 
   const { isMin } = getArgs();
-
+  
   const expandTerminal = (lines) => {
     expandPanelZellij(lines);
     expandPanelTMUX(lines);
