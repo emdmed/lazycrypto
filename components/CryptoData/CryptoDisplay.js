@@ -13,7 +13,9 @@ const CryptoDisplay = ({
   historicalLoading,
   indicators,
   onShowMenu,
-  isTradesVisible
+  isTradesVisible,
+  currentPrice,
+  prevPrice
 }) => {
 
 
@@ -31,7 +33,7 @@ const CryptoDisplay = ({
         marginBottom={1}
         flexDirection="column"
       >
-        <CryptoHeader data={data} ticker={ticker} />
+        <CryptoHeader ticker={ticker} currentPrice={currentPrice} prevPrice={prevPrice} />
 
         <Box
           width="100%"

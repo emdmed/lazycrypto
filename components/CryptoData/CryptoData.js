@@ -15,7 +15,7 @@ const CryptoData = ({
   onBack,
   apiKey,
   selectedTimeframe,
-  isTradesVisible
+  isTradesVisible,
 }) => {
   const [currentCrypto, setCurrentCrypto] = useState(initialCrypto);
   const [currentTicker, setCurrentTicker] = useState(initialTicker);
@@ -23,13 +23,8 @@ const CryptoData = ({
 
   const { isMin } = getArgs();
 
-  const {
-    data,
-    loading,
-    error,
-    historicalData,
-    indicators,
-  } = useCryptoData(currentCrypto, apiKey, selectedTimeframe);
+  const { data, loading, error, historicalData, indicators, currentPrice, prevPrice } =
+    useCryptoData(currentCrypto, apiKey, selectedTimeframe);
 
   useEffect(() => {
     if (initialCrypto && initialCrypto !== currentCrypto) {
@@ -66,7 +61,7 @@ const CryptoData = ({
     );
   }
 
-  if (!data) return null;
+  if (!data || !currentPrice) return null;
 
   if (isMin)
     return (
@@ -81,6 +76,8 @@ const CryptoData = ({
 
   return (
     <CryptoDisplay
+      currentPrice={currentPrice}
+      prevPrice={prevPrice}
       data={data}
       ticker={currentTicker || getTicker(currentCrypto)}
       historicalData={historicalData}

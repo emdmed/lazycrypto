@@ -134,7 +134,7 @@ const MultiCryptoDashboard = ({
       paddingRight={1}
     >
       {!isMin && (
-        <Box marginBottom={1} justifyContent="space-between">
+        <Box marginBottom={1} justifyContent="space-between" borderStyle="single" borderColor="cyan" borderTop={false} borderLeft={false} borderRight={false}>
           <Text bold color="cyan">
             LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh:
             15min

@@ -37,22 +37,27 @@ export const saveOrder = async ({
     newOrder.open = orderDetails.side === "buy" ? true : false;
   }
 
-  if (tradesFile && Array.isArray(tradesFile && !byId)) {
-    tradesFile.push(newOrder);
-  } else if (tradesFile && Array.isArray(tradesFile) && byId) {
-    const newTradesFile = tradesFile.map((trade) => {
-      if (trade.id === byId) {
-        trade.open = false;
-        return trade;
-      } else {
-        return trade;
-      }
+  try {
+    if (tradesFile && Array.isArray(tradesFile && !byId)) {
+      tradesFile.push(newOrder);
+    } else if (tradesFile && Array.isArray(tradesFile) && byId) {
+      console.log("write by id");
+      const newTradesFile = tradesFile.map((trade) => {
+        if (trade.orderId === byId) {
+          trade.open = false;
+          return trade;
+        } else {
+          return trade;
+        }
 
-      newTradesFile.push(newOrder);
-    });
-  } else {
-    tradesFile = [newOrder];
+        newTradesFile.push(newOrder);
+      });
+    } else {
+      tradesFile = [newOrder];
+    }
+
+    writeJsonToFile(tradesFile, filePath);
+  } catch (err) {
+    console.log("WOOPS! ", err);
   }
-
-  writeJsonToFile(tradesFile, filePath);
 };

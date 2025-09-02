@@ -6,6 +6,7 @@ import { exchanges } from "../../../../exchanges/exchanges.js";
 import { formatPrice } from "../../../../utils/formatters/formatters.js";
 import { useGetOrders } from "../../hooks/useGetOrders.js";
 import { useCryptoData } from "../../../../hooks/useCryptoData.js";
+import { saveOrder } from "../SaveOrder.js";
 
 const ClosePanel = ({
   selectedPair,
@@ -20,6 +21,7 @@ const ClosePanel = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [symbolInfo, setSymbolInfo] = useState();
 
   const { historicalData, historicalLoading } = useCryptoData(
     selectedPair.split("-")[0],
@@ -104,21 +106,48 @@ const ClosePanel = ({
     setStep("confirm");
   };
 
+  const fetchSymbolInfo = async () => {
+    try {
+      const symbolParams = await exchanges.kucoin.getSymbolParams(selectedPair);
+      if (symbolParams) {
+        return symbolParams;
+      } else {
+        setError("Failed to fetch symbol information");
+      }
+    } catch (err) {
+      setError("Failed to fetch symbol information");
+    }
+  };
+
   const closeOrder = async () => {
     setIsLoading(true);
     setError("");
 
+    const symbolInfo = await fetchSymbolInfo();
+
     try {
-      // Place a market sell order to close the position
       const sellResult = await exchanges.kucoin.placeOrder(
         "sell",
         currentPrice,
-        parseFloat(amount),
+        parseFloat(selectedOrder.cryptoAmount),
         symbolInfo,
         selectedPair,
       );
 
-      if (sellResult && sellResult.data && sellResult.data.orderId) {
+      const orderId = sellResult?.data?.orderId;
+
+      if (sellResult && sellResult.data && orderId) {
+        const orderDetailsResponse =
+          await exchanges.kucoin.getOrderDetailsById(orderId);
+
+        saveOrder({
+          orderDetails: orderDetailsResponse,
+          currentPrice,
+          pair: selectedPair,
+          exchange: "kucoin",
+          byId: selectedOrder.orderId,
+        });
+
         setSuccess(
           `Position closed successfully! Sell Order ID: ${sellResult.data.orderId}`,
         );
@@ -262,8 +291,8 @@ const ClosePanel = ({
                 return (
                   <Box gap={1}>
                     <Text color={isSelected ? "blue" : color}>
-                      {isSelected ? "► " : "  "}{order.cryptoAmount} at{" "}
-                      {formatPrice(order.price)}
+                      {isSelected ? "► " : "  "}
+                      {order.cryptoAmount} at {formatPrice(order.price)}
                     </Text>
                     <Text inverse color={color}>
                       {" "}
