@@ -33,6 +33,7 @@ const App = () => {
   const [isTimeframeSelectorVisible, setIsTimeframeSelectorVisible] =
     useState(false);
   const [isOrderPanelVisible, setIsOrderPanelVisible] = useState(false);
+  const [isTradesVisible, setIsTradesVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
   const [apiKey, setApiKey] = useState("");
   const [apiSecret, setApiSecret] = useState("");
@@ -54,6 +55,7 @@ const App = () => {
   };
 
   useInput((input, key) => {
+    
     if (
       !isLoading &&
       !isConfigPanelVisible &&
@@ -66,7 +68,7 @@ const App = () => {
           setIsConfigPanelVisible(true);
         }, 200);
       }
-      if (input.toLowerCase() === "t") {
+      if (input === "t") {
         expandTerminal(3);
         console.clear();
         setTimeout(() => {
@@ -79,6 +81,10 @@ const App = () => {
         } else {
           setIsConfigPanelVisible(true);
         }
+      }
+      
+      if(input === "T"){
+        setIsTradesVisible(prev => !prev)
       }
     }
 
@@ -300,13 +306,14 @@ const App = () => {
   }
 
   return (
-    <Box flexDirection="column" padding={isMin ? 0 : 1}>
+    <Box flexDirection="column">
       <MultiCryptoDashboard
         apiKey={apiKey}
         selectedTimeframe={selectedTimeframe}
         onBack={handleBack}
         onSymbolChange={handleSymbolChange}
         isMinified={isMin}
+        isTradesVisible={isTradesVisible}
       />
     </Box>
   );

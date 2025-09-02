@@ -13,6 +13,7 @@ const CryptoDisplay = ({
   historicalLoading,
   indicators,
   onShowMenu,
+  isTradesVisible
 }) => {
 
 
@@ -53,7 +54,7 @@ const CryptoDisplay = ({
           indicators={indicators}
           onShowMenu={onShowMenu}
         />
-        <CryptoOrders ticker={ticker} historicalData={historicalData}/>
+        {isTradesVisible && <CryptoOrders ticker={ticker} historicalData={historicalData}/>}
       </Box>
     </Box>
   );

@@ -6,8 +6,8 @@ const CryptoHeader = ({ data, ticker }) => {
   return (
     <Box justifyContent="space-between" width="100%">
       <Box flexDirection="row" gap={1}>
-        <Text bold color="cyan">
-          {data.name || 'Unknown'}
+        <Text inverse bold color="cyan">
+          {` ${data.name} ` || 'Unknown'}
         </Text>
         <Text color="white" marginLeft={1}>
           ({ticker})

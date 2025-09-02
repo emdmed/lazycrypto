@@ -15,6 +15,7 @@ const CryptoData = ({
   onBack,
   apiKey,
   selectedTimeframe,
+  isTradesVisible
 }) => {
   const [currentCrypto, setCurrentCrypto] = useState(initialCrypto);
   const [currentTicker, setCurrentTicker] = useState(initialTicker);
@@ -85,6 +86,7 @@ const CryptoData = ({
       historicalData={historicalData}
       indicators={indicators}
       onShowMenu={() => setShowCryptoMenu(true)}
+      isTradesVisible={isTradesVisible}
     />
   );
 };
