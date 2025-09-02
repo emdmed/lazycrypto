@@ -1,6 +1,6 @@
 import { readJsonFromFile } from "../../../utils/readJsonFile.js";
 import { writeJsonToFile } from "../../../utils/writeJsonFile.js";
-import path from "path"
+import path from "path";
 import os from "os";
 
 export const saveOrder = async ({
@@ -8,6 +8,7 @@ export const saveOrder = async ({
   exchange,
   currentPrice,
   pair,
+  byId,
 }) => {
   const configDir = path.join(os.homedir(), ".config/lazycrypto");
   const filePath = path.join(configDir, `${pair}.json`);
@@ -32,13 +33,23 @@ export const saveOrder = async ({
     newOrder.pair = orderDetails.symbol;
     newOrder.cryptoAmount = orderDetails.size;
     newOrder.fee = orderDetails.fee;
-    newOrder.usdtValue = orderDetails.dealFunds
+    newOrder.usdtValue = orderDetails.dealFunds;
+    newOrder.open = orderDetails.side === "buy" ? true : false;
   }
-  
-  
 
-  if (tradesFile && Array.isArray(tradesFile)) {
+  if (tradesFile && Array.isArray(tradesFile && !byId)) {
     tradesFile.push(newOrder);
+  } else if (tradesFile && Array.isArray(tradesFile) && byId) {
+    const newTradesFile = tradesFile.map((trade) => {
+      if (trade.id === byId) {
+        trade.open = false;
+        return trade;
+      } else {
+        return trade;
+      }
+
+      newTradesFile.push(newOrder);
+    });
   } else {
     tradesFile = [newOrder];
   }

@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Box, Text, useInput } from "ink";
-import TextInput from "ink-text-input";
-import SelectInput from "ink-select-input";
-import Spinner from "ink-spinner";
 import { exchanges } from "../../../exchanges/exchanges.js";
 import { contractPanelZellij, expandPanelZellij } from "../terminals/zellij.js";
 import { contractPanelTMUX, expandPanelTMUX } from "../terminals/tmux.js";
 import { getArgs } from "../../../utils/getArgs.js";
-import { formatPrice } from "../../../utils/formatters/formatters.js";
 import { cryptoOptions } from "../../../constants/cryptoOptions.js";
 import { saveOrder } from "./SaveOrder.js";
 
-const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
+// Import the new step components
+import SelectPair from "./steps/SelectPair.js";
+import SelectSide from "./steps/SelectSide.js";
+import EnterAmount from "./steps/EnterAmount.js";
+import ConfirmOrder from "./steps/ConfirmOrder.js";
+import LoadingState from "./steps/LoadingState.js";
+import SuccessState from "./steps/SuccessState.js";
+import ClosePanel from "./steps/ClosePanel.js";
+
+const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimeframe }) => {
   const [step, setStep] = useState("selectPair");
   const [selectedPair, setSelectedPair] = useState(currentSymbol);
   const [orderSide, setOrderSide] = useState("buy");
@@ -162,6 +167,11 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
   };
 
   const handleSideSelect = (item) => {
+    if (item.value === "close") {
+      setStep("closePosition");
+      return;
+    }
+    
     setOrderSide(item.value);
     setStep("enterAmount");
   };
@@ -177,35 +187,22 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
   };
 
   if (isLoading) {
-    return (
-      <Box
-        flexDirection="column"
-        padding={1}
-        borderStyle="round"
-        borderColor="yellow"
-      >
-        <Box>
-          <Text color="yellow">
-            <Spinner type="dots" /> Placing order...
-          </Text>
-        </Box>
-      </Box>
-    );
+    return <LoadingState />;
   }
 
   if (success) {
+    return <SuccessState message={success} />;
+  }
+
+  if (step === "closePosition") {
     return (
-      <Box
-        flexDirection="column"
-        padding={1}
-        borderStyle="round"
-        borderColor="green"
-      >
-        <Text color="green">✓ {success}</Text>
-        <Text color="gray" dimColor>
-          Press Enter to continue
-        </Text>
-      </Box>
+      <ClosePanel
+        selectedPair={selectedPair}
+        apiKey={apiKey}
+        onClose={onClose}
+        onBack={() => setStep("selectSide")}
+        selectedTimeframe={selectedTimeframe}
+      />
     );
   }
 
@@ -229,103 +226,39 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT" }) => {
       )}
 
       {step === "selectPair" && (
-        <Box flexDirection="column">
-          <Text color="yellow">Select Trading Pair:</Text>
-          <Box marginTop={1}>
-            <SelectInput
-              items={pairs}
-              onSelect={handlePairSelect}
-              initialIndex={pairs.findIndex((p) => p.value === selectedPair)}
-            />
-          </Box>
-        </Box>
+        <SelectPair
+          pairs={pairs}
+          selectedPair={selectedPair}
+          onSelect={handlePairSelect}
+        />
       )}
 
       {step === "selectSide" && (
-        <Box flexDirection="column">
-          <Text color="yellow">Selected: {selectedPair}</Text>
-          <Text color="yellow" marginTop={1}>
-            Select Order Side:
-          </Text>
-          <Box marginTop={1}>
-            <SelectInput
-              items={[
-                { label: "Buy", value: "buy" },
-                { label: "Sell", value: "sell" },
-              ]}
-              onSelect={handleSideSelect}
-            />
-          </Box>
-        </Box>
+        <SelectSide
+          selectedPair={selectedPair}
+          onSelect={handleSideSelect}
+        />
       )}
 
       {step === "enterAmount" && (
-        <Box flexDirection="column">
-          <Text color="yellow">
-            {orderSide === "buy" ? "Buying" : "Selling"} {selectedPair}
-          </Text>
-          {currentPrice && (
-            <Text>Current Price: {formatPrice(currentPrice)} USDT</Text>
-          )}
-          {availableBalance !== null && (
-            <Text>
-              Available: {availableBalance.toFixed(4)}{" "}
-              {orderSide === "buy" ? "USDT" : selectedPair.split("-")[0]}
-            </Text>
-          )}
-          {orderSide === "sell" && amount && currentPrice && (
-            <Text color="cyan">
-              ≈ {(parseFloat(amount) * currentPrice).toFixed(4)} USDT
-            </Text>
-          )}
-          <Box marginTop={1}>
-            <Text color="yellow">
-              Enter Amount (
-              {orderSide === "buy" ? "USDT" : selectedPair.split("-")[0]}):
-            </Text>
-            <TextInput
-              value={amount}
-              onChange={setAmount}
-              onSubmit={handleAmountSubmit}
-              placeholder="0.00"
-            />
-          </Box>
-        </Box>
+        <EnterAmount
+          selectedPair={selectedPair}
+          orderSide={orderSide}
+          currentPrice={currentPrice}
+          availableBalance={availableBalance}
+          amount={amount}
+          onAmountChange={setAmount}
+          onSubmit={handleAmountSubmit}
+        />
       )}
 
       {step === "confirm" && (
-        <Box flexDirection="column">
-          <Text bold color="yellow">
-            Confirm Order:
-          </Text>
-          <Box marginTop={1} flexDirection="column">
-            <Text>
-              Pair: <Text color="cyan">{selectedPair}</Text>
-            </Text>
-            <Text>
-              Side:{" "}
-              <Text color={orderSide === "buy" ? "green" : "red"}>
-                {orderSide.toUpperCase()}
-              </Text>
-            </Text>
-            <Text>
-              Amount: <Text color="cyan">{amount}</Text>
-            </Text>
-            {currentPrice && (
-              <Text>
-                Est. Total:{" "}
-                <Text color="cyan">
-                  {orderSide === "buy"
-                    ? `${amount} USDT`
-                    : `${(parseFloat(amount) * currentPrice).toFixed(4)} USDT`}
-                </Text>
-              </Text>
-            )}
-          </Box>
-          <Box marginTop={1}>
-            <Text color="gray">Place order? (Y/n)</Text>
-          </Box>
-        </Box>
+        <ConfirmOrder
+          selectedPair={selectedPair}
+          orderSide={orderSide}
+          amount={amount}
+          currentPrice={currentPrice}
+        />
       )}
 
       <Box marginTop={1}>

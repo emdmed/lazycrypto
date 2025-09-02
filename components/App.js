@@ -301,6 +301,7 @@ const App = () => {
         apiPassphrase={apiPassphrase}
         onClose={handleOrderPanelClose}
         currentSymbol={currentSymbol}
+        selectedTimeframe={selectedTimeframe}
       />
     );
   }
