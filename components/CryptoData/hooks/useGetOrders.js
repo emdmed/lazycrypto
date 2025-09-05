@@ -5,6 +5,7 @@ import { exchanges } from "../../../exchanges/exchanges.js";
 
 export const useGetOrders = ({ pair }) => {
   const [orders, setOrders] = useState();
+  const [openOrders, setOpenOrders] = useState([])
   const [balance, setBalance] = useState();
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
   const [isLoadingBalance, setIsLoadingBalance] = useState(false);
@@ -14,6 +15,7 @@ export const useGetOrders = ({ pair }) => {
     setIsLoadingOrders(true);
     const orders = await readJsonFromFile(`${filePath}/${pair}.json`);
     setOrders(orders);
+    setOpenOrders(orders.filter(order => order.open === true))
     setIsLoadingOrders(false);
   };
 
@@ -32,5 +34,5 @@ export const useGetOrders = ({ pair }) => {
     fetchBalance();
   }, [pair]);
 
-  return { orders, balance, isLoadingOrders, isLoadingBalance };
+  return { orders, openOrders, balance, isLoadingOrders, isLoadingBalance };
 };

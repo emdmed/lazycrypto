@@ -125,33 +125,6 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
       try {
         setLoading(true);
         setError(null);
-
-        if (!apiKey) {
-          setError(
-            "Please set your LIVECOINWATCH_API_KEY environment variable",
-          );
-          return;
-        }
-
-        const apiCode = getApiCode(currentCrypto);
-
-        const response = await axios.post(
-          "https://api.livecoinwatch.com/coins/single",
-          {
-            currency: "USD",
-            code: apiCode,
-            meta: true,
-          },
-          {
-            headers: {
-              "content-type": "application/json",
-              "x-api-key": apiKey,
-            },
-          },
-        );
-
-        setData(response.data);
-
         await fetchHistoricalData();
       } catch (err) {
         if (err.response?.status === 401) {
@@ -174,7 +147,7 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
     fetchData();
     const interval = setInterval(fetchData, REFETCH_INTERVAL);
     return () => clearInterval(interval);
-  }, [currentCrypto, apiKey]);
+  }, [currentCrypto]);
 
   useEffect(() => {
     setData(null);

@@ -11,6 +11,8 @@ const CryptoDisplayMini = ({
   historicalLoading,
   indicators,
   onShowMenu,
+  currentPrice,
+  prevPrice
 }) => {
   return (
     <Box flexDirection="row">
@@ -26,7 +28,7 @@ const CryptoDisplayMini = ({
             <Text inverse >{ticker ? ` ${ticker} ` : ""}</Text>
           </Box>
           <Box flexDirection="row" justifyContent="flex-end" marginRight={1}>
-            <Text color="yellow">{` ${formatPrice(data?.rate)} `}</Text>
+            <Text color="yellow">{` ${formatPrice(currentPrice)} `}</Text>
           </Box>
         </Box>
         <Box

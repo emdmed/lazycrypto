@@ -15,7 +15,9 @@ const CryptoDisplay = ({
   onShowMenu,
   isTradesVisible,
   currentPrice,
-  prevPrice
+  prevPrice,
+  cardNumber,
+  totalCards
 }) => {
 
 
@@ -29,6 +31,7 @@ const CryptoDisplay = ({
         borderTop={false}
         borderLeft={false}
         borderRight={false}
+        borderBottom={cardNumber === totalCards ? false : true}
         paddingBottom={1}
         marginBottom={1}
         flexDirection="column"

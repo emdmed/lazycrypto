@@ -16,6 +16,8 @@ const CryptoData = ({
   apiKey,
   selectedTimeframe,
   isTradesVisible,
+  cardNumber,
+  totalCards
 }) => {
   const [currentCrypto, setCurrentCrypto] = useState(initialCrypto);
   const [currentTicker, setCurrentTicker] = useState(initialTicker);
@@ -61,7 +63,7 @@ const CryptoData = ({
     );
   }
 
-  if (!data || !currentPrice) return null;
+  if ( !currentPrice) return null;
 
   if (isMin)
     return (
@@ -71,6 +73,8 @@ const CryptoData = ({
         historicalData={historicalData}
         indicators={indicators}
         onShowMenu={() => setShowCryptoMenu(true)}
+        currentPrice={currentPrice}
+        prevPrice={prevPrice}
       />
     );
 
@@ -84,6 +88,8 @@ const CryptoData = ({
       indicators={indicators}
       onShowMenu={() => setShowCryptoMenu(true)}
       isTradesVisible={isTradesVisible}
+      cardNumber={cardNumber}
+      totalCards={totalCards}
     />
   );
 };

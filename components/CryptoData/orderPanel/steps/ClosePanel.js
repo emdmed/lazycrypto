@@ -31,7 +31,7 @@ const ClosePanel = ({
 
   const currentPrice = historicalData[historicalData.length - 1]?.[2];
 
-  const { orders, isLoadingOrders } = useGetOrders({ pair: selectedPair });
+  const { orders, openOrders, isLoadingOrders } = useGetOrders({ pair: selectedPair });
 
   useInput((input, key) => {
     if (key.escape) {
@@ -57,11 +57,11 @@ const ClosePanel = ({
 
   // Process orders when they are loaded from the hook
   useEffect(() => {
-    if (!isLoadingOrders && orders) {
-      processOrders(orders);
+    if (!isLoadingOrders && openOrders) {
+      processOrders(openOrders);
     }
-  }, [orders, isLoadingOrders]);
-
+  }, [openOrders, isLoadingOrders]);
+  
   const processOrders = (ordersData) => {
     try {
       setError("");
@@ -280,7 +280,7 @@ const ClosePanel = ({
           </Box>
           <Box marginTop={1} gap={1}>
             <SelectInput
-              items={activeOrders.filter(order => order.order.open === false)}
+              items={activeOrders}
               onSelect={handleOrderSelect}
               itemComponent={({ isSelected, label, value }) => {
                 const order = activeOrders.find(

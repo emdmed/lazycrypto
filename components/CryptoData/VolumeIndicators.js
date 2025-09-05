@@ -32,7 +32,7 @@ const VolumeIndicators = ({ historicalData }) => {
             marksColor="grey"
             baseColor="grey"
             fill={true}
-            valueColor="blue"
+            valueColor="cyan"
           />
         ))}
     </Box>

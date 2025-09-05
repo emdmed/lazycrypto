@@ -22,7 +22,6 @@ import {
   expandPanelTMUX,
   setupTmuxLayout,
 } from "./CryptoData/terminals/tmux.js";
-import { useGetOrders } from "./CryptoData/hooks/useGetOrders.js";
 
 const clearTerminal = () => {
   console.clear();
@@ -33,7 +32,7 @@ const App = () => {
   const [isTimeframeSelectorVisible, setIsTimeframeSelectorVisible] =
     useState(false);
   const [isOrderPanelVisible, setIsOrderPanelVisible] = useState(false);
-  const [isTradesVisible, setIsTradesVisible] = useState(false)
+  const [isTradesVisible, setIsTradesVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [apiKey, setApiKey] = useState("");
   const [apiSecret, setApiSecret] = useState("");
@@ -43,7 +42,7 @@ const App = () => {
   const [currentSymbol, setCurrentSymbol] = useState("BTC-USDT");
 
   const { isMin } = getArgs();
-  
+
   const expandTerminal = (lines) => {
     expandPanelZellij(lines);
     expandPanelTMUX(lines);
@@ -55,7 +54,6 @@ const App = () => {
   };
 
   useInput((input, key) => {
-    
     if (
       !isLoading &&
       !isConfigPanelVisible &&
@@ -82,9 +80,9 @@ const App = () => {
           setIsConfigPanelVisible(true);
         }
       }
-      
-      if(input === "T"){
-        setIsTradesVisible(prev => !prev)
+
+      if (input === "T") {
+        setIsTradesVisible((prev) => !prev);
       }
     }
 
@@ -121,9 +119,7 @@ const App = () => {
     try {
       const configData = await readJsonFromFile(filePath);
 
-      if (configData && configData.apiKey) {
-        setApiKey(configData.apiKey);
-
+      if (configData) {
         setApiSecret(configData.kucoinApiSecret || "");
         setApiPassphrase(configData.kucoinApiPassphrase || "");
         setConfigData(configData);
@@ -287,9 +283,7 @@ const App = () => {
           <Text color="yellow">
             Press 'c' to configure API credentials with trading permissions
           </Text>
-          <Text  dimColor>
-            Press ESC to go back
-          </Text>
+          <Text dimColor>Press ESC to go back</Text>
         </Box>
       );
     }

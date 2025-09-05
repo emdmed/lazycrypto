@@ -152,9 +152,10 @@ const MultiCryptoDashboard = ({
                 crypto={cryptoId}
                 ticker={ticker}
                 apiKey={apiKey}
-                ao
                 selectedTimeframe={selectedTimeframe}
                 isTradesVisible={isTradesVisible}
+                totalCards={selectedCryptos?.length}
+                cardNumber={index + 1}
               />
             </Box>
           );
