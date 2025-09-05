@@ -22,11 +22,11 @@ const CryptoDisplayMini = ({
         flexDirection="row"
       >
         <Box width={25}>
-          <Box flexDirection="row" marginRight={1}>
-            <Text inverse >{ticker ? ticker : ""}</Text>
+          <Box flexDirection="row">
+            <Text inverse >{ticker ? ` ${ticker} ` : ""}</Text>
           </Box>
-          <Box flexDirection="row" marginRight={1}>
-            <Text color="yellow">{formatPrice(data?.rate)}</Text>
+          <Box flexDirection="row" justifyContent="flex-end" marginRight={1}>
+            <Text color="yellow">{` ${formatPrice(data?.rate)} `}</Text>
           </Box>
         </Box>
         <Box

@@ -39,7 +39,7 @@ const ConfirmOrder = ({
       </Box>
       
       <Box marginTop={1}>
-        <Text color="gray">Place order? (Y/n)</Text>
+        <Text>Place order? (Y/n)</Text>
       </Box>
     </Box>
   );

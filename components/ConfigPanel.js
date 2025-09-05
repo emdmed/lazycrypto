@@ -268,7 +268,7 @@ const ConfigPanel = ({
                 Press <Text bold>Enter</Text> or <Text bold>Tab</Text> to go to
                 next field
               </Text>
-              <Text color="gray" fontSize={12}>
+              <Text  fontSize={12}>
                 Press <Text bold>Esc</Text> to cancel
               </Text>
             </>
@@ -277,7 +277,7 @@ const ConfigPanel = ({
               <Text color="green" fontSize={12}>
                 Press <Text bold>Enter</Text> to save
               </Text>
-              <Text color="gray" fontSize={12}>
+              <Text  fontSize={12}>
                 Press <Text bold>Esc</Text> to cancel
                 {includeTrading &&
                   " | Press <Text bold>Tab</Text> to navigate fields"}

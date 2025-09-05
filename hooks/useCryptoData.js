@@ -93,8 +93,8 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
 
       const sortedData = processedData.sort((a, b) => a[0] - b[0]);
 
-      setCurrentPrice(sortedData[sortedData.length - 1][2]);
-      setPrevPrice(sortedData[sortedData.length - 2][2]);
+      setCurrentPrice(sortedData[sortedData.length - 1][4]);
+          setPrevPrice(sortedData[sortedData.length - 2][4]);
       setHistoricalData(sortedData);
 
       if (sortedData.length >= 101) {

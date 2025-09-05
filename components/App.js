@@ -287,7 +287,7 @@ const App = () => {
           <Text color="yellow">
             Press 'c' to configure API credentials with trading permissions
           </Text>
-          <Text color="gray" dimColor>
+          <Text  dimColor>
             Press ESC to go back
           </Text>
         </Box>

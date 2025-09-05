@@ -102,6 +102,7 @@ const ClosePanel = ({
   };
 
   const handleOrderSelect = (item) => {
+    if (!item.order.open) return;
     setSelectedOrder(item.order);
     setStep("confirm");
   };
@@ -124,8 +125,8 @@ const ClosePanel = ({
     setError("");
 
     const symbolInfo = await fetchSymbolInfo();
-
     try {
+
       const sellResult = await exchanges.kucoin.placeOrder(
         "sell",
         currentPrice,
@@ -134,8 +135,9 @@ const ClosePanel = ({
         selectedPair,
       );
 
+      
       const orderId = sellResult?.data?.orderId;
-
+      
       if (sellResult && sellResult.data && orderId) {
         const orderDetailsResponse =
           await exchanges.kucoin.getOrderDetailsById(orderId);
@@ -165,18 +167,26 @@ const ClosePanel = ({
 
   const calculatePnL = () => {
     if (!selectedOrder || !currentPrice) return null;
-
+  
     const buyPrice = parseFloat(selectedOrder.price);
     const quantity = parseFloat(selectedOrder.cryptoAmount);
+    
+    // What you originally paid (cost basis)
+    const originalCost = quantity * buyPrice;
+    
+    // What you'll receive when selling (current value)
     const currentValue = quantity * currentPrice;
-    const originalValue = quantity * buyPrice;
-    const pnl = currentValue - originalValue;
+    
+    // P&L is the difference
+    const pnl = currentValue - originalCost;
     const pnlPercentage = ((currentPrice - buyPrice) / buyPrice) * 100;
-
+  
     return {
       pnl: pnl.toFixed(4),
       pnlPercentage: pnlPercentage.toFixed(2),
       isProfit: pnl > 0,
+      originalCost: originalCost.toFixed(4),
+      currentValue: currentValue.toFixed(4)
     };
   };
 
@@ -206,9 +216,7 @@ const ClosePanel = ({
         borderColor="green"
       >
         <Text color="green">✓ {success}</Text>
-        <Text color="gray" dimColor>
-          Press Enter to continue
-        </Text>
+        <Text dimColor>Press Enter to continue</Text>
       </Box>
     );
   }
@@ -246,9 +254,7 @@ const ClosePanel = ({
             No active buy orders found for {selectedPair}
           </Text>
           <Box marginTop={1}>
-            <Text color="gray" dimColor>
-              Press ESC to go back
-            </Text>
+            <Text dimColor>Press ESC to go back</Text>
           </Box>
         </Box>
       )}
@@ -257,9 +263,7 @@ const ClosePanel = ({
         <Box flexDirection="column">
           <Text color="red">Error loading orders</Text>
           <Box marginTop={1}>
-            <Text color="gray" dimColor>
-              Press ESC to go back
-            </Text>
+            <Text dimColor>Press ESC to go back</Text>
           </Box>
         </Box>
       )}
@@ -274,14 +278,15 @@ const ClosePanel = ({
               </Text>
             )}
           </Box>
-          <Box marginTop={1}>
+          <Box marginTop={1} gap={1}>
             <SelectInput
-              items={activeOrders}
+              items={activeOrders.filter(order => order.order.open === false)}
               onSelect={handleOrderSelect}
               itemComponent={({ isSelected, label, value }) => {
                 const order = activeOrders.find(
                   (o) => o.value === value,
                 )?.order;
+
                 if (!order || !currentPrice) return <Text>{label}</Text>;
 
                 const delta =
@@ -290,8 +295,7 @@ const ClosePanel = ({
 
                 return (
                   <Box gap={1}>
-                    <Text color={isSelected ? "blue" : color}>
-                      {isSelected ? "► " : "  "}
+                    <Text color={isSelected ? "cyan" : color}>
                       {order.cryptoAmount} at {formatPrice(order.price)}
                     </Text>
                     <Text inverse color={color}>
@@ -302,6 +306,7 @@ const ClosePanel = ({
                 );
               }}
             />
+            {!currentPrice ? <Spinner type="dots"></Spinner> : null}
           </Box>
         </Box>
       )}
@@ -355,12 +360,12 @@ const ClosePanel = ({
 
           <Box marginTop={1}>
             <Text color="yellow">
-              ⚠ This will cancel the buy order and place a market sell order
+              This will sell your bought amount of crypto
             </Text>
           </Box>
 
           <Box marginTop={1}>
-            <Text color="gray">Close position? (Y/n)</Text>
+            <Text>Close position? (Y/n)</Text>
           </Box>
         </Box>
       )}

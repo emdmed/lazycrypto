@@ -38,7 +38,7 @@ const CryptoOrders = ({ ticker, historicalData }) => {
               return (
                 <Box key={order.orderId} justifyContent="row" gap={1}>
                   <Text color={color}>
-                    Open: {order.cryptoAmount} at {formatPrice(order.price)}
+                    {order.cryptoAmount} at {formatPrice(order.price)}
                   </Text>
                   <Text inverse color={color}>
                     {" "}

@@ -10,7 +10,7 @@ const SuccessState = ({ message }) => {
       borderColor="green"
     >
       <Text color="green">✓ {message}</Text>
-      <Text color="gray" dimColor>
+      <Text  dimColor>
         Press Enter to continue
       </Text>
     </Box>

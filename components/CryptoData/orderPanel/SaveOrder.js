@@ -10,6 +10,7 @@ export const saveOrder = async ({
   pair,
   byId,
 }) => {
+  
   const configDir = path.join(os.homedir(), ".config/lazycrypto");
   const filePath = path.join(configDir, `${pair}.json`);
 
@@ -38,10 +39,9 @@ export const saveOrder = async ({
   }
 
   try {
-    if (tradesFile && Array.isArray(tradesFile && !byId)) {
+    if (tradesFile && Array.isArray(tradesFile)  && !byId) {
       tradesFile.push(newOrder);
     } else if (tradesFile && Array.isArray(tradesFile) && byId) {
-      console.log("write by id");
       const newTradesFile = tradesFile.map((trade) => {
         if (trade.orderId === byId) {
           trade.open = false;

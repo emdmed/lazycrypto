@@ -262,7 +262,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
       )}
 
       <Box marginTop={1}>
-        <Text dimColor color="gray">
+        <Text dimColor>
           Press ESC to cancel
         </Text>
       </Box>
