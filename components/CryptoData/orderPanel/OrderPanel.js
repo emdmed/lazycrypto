@@ -28,6 +28,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
   const [symbolInfo, setSymbolInfo] = useState(null);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [pairs, setPairs] = useState([]);
+  const [hasPosition, setHasPosition] = useState(false); // Track if pair has position
   const { isMin } = getArgs();
 
   useEffect(() => {
@@ -45,6 +46,54 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
       onClose();
       contractPanelZellij(4);
       contractPanelTMUX(4);
+    }
+
+    // Quick action shortcuts - only available on certain steps
+    if (step === "selectPair") {
+      if (input.toLowerCase() === "b") {
+        // Quick buy - set current pair, buy side, and go to amount entry
+        setSelectedPair(currentSymbol);
+        setOrderSide("buy");
+        setStep("enterAmount");
+        return;
+      }
+      
+      if (input.toLowerCase() === "s") {
+        // Quick sell - set current pair, sell side, and go to amount entry
+        setSelectedPair(currentSymbol);
+        setOrderSide("sell");
+        setStep("enterAmount");
+        return;
+      }
+      
+      if (input.toLowerCase() === "c" && hasPosition) {
+        // Quick close - only if there's a position to close
+        setSelectedPair(currentSymbol);
+        setStep("closePosition");
+        return;
+      }
+    }
+
+    if (step === "selectSide") {
+      if (input.toLowerCase() === "b") {
+        // Quick buy with already selected pair
+        setOrderSide("buy");
+        setStep("enterAmount");
+        return;
+      }
+      
+      if (input.toLowerCase() === "s") {
+        // Quick sell with already selected pair
+        setOrderSide("sell");
+        setStep("enterAmount");
+        return;
+      }
+      
+      if (input.toLowerCase() === "c" && hasPosition) {
+        // Close position with already selected pair - only if position exists
+        setStep("closePosition");
+        return;
+      }
     }
 
     if (step === "confirm") {
@@ -76,8 +125,29 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
       fetchSymbolInfo();
       fetchCurrentPrice();
       fetchBalance();
+      checkPosition(); // Check if there's a position for this pair
     }
   }, [selectedPair, orderSide]);
+
+  const checkPosition = async () => {
+    try {
+      // Check if there's an open position for the selected pair
+      // This assumes you have a method to check positions in your exchange API
+      const positions = await exchanges.kucoin.getPositions?.(selectedPair);
+      const hasOpenPosition = positions && positions.length > 0 && 
+        positions.some(pos => pos.size > 0 || pos.currentQty > 0);
+      
+      // Alternatively, if you don't have a positions endpoint, 
+      // check if there's available balance of the base currency
+      const baseCurrency = selectedPair.split("-")[0];
+      const baseBalance = await exchanges.kucoin.getBalance(baseCurrency);
+      
+      setHasPosition(hasOpenPosition || (baseBalance && baseBalance > 0));
+    } catch (err) {
+      console.error("Error checking position:", err);
+      setHasPosition(false);
+    }
+  };
 
   const fetchSymbolInfo = async () => {
     try {
@@ -168,6 +238,10 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
 
   const handleSideSelect = (item) => {
     if (item.value === "close") {
+      if (!hasPosition) {
+        setError("No position to close for this pair");
+        return;
+      }
       setStep("closePosition");
       return;
     }
@@ -237,6 +311,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
         <SelectSide
           selectedPair={selectedPair}
           onSelect={handleSideSelect}
+          hasPosition={hasPosition} // Pass position status to SelectSide component
         />
       )}
 
@@ -264,6 +339,12 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
       <Box marginTop={1}>
         <Text dimColor>
           Press ESC to cancel
+          {step === "selectPair" && selectedPair && (
+            <Text> • B to quick buy • S to quick sell{hasPosition && " • C to close position"} (on selected pair)</Text>
+          )}
+          {step === "selectSide" && (
+            <Text> • B to quick buy • S to quick sell{hasPosition && " • C to close position"}</Text>
+          )}
         </Text>
       </Box>
     </Box>
