@@ -7,7 +7,6 @@ import { getArgs } from "../../../utils/getArgs.js";
 import { cryptoOptions } from "../../../constants/cryptoOptions.js";
 import { saveOrder } from "./SaveOrder.js";
 
-// Import the new step components
 import SelectPair from "./steps/SelectPair.js";
 import SelectSide from "./steps/SelectSide.js";
 import EnterAmount from "./steps/EnterAmount.js";
@@ -28,7 +27,8 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
   const [symbolInfo, setSymbolInfo] = useState(null);
   const [currentPrice, setCurrentPrice] = useState(null);
   const [pairs, setPairs] = useState([]);
-  const [hasPosition, setHasPosition] = useState(false); // Track if pair has position
+  const [hasPosition, setHasPosition] = useState(false);
+  const [pairSelected, setPairSelected] = useState(false); // Track if pair has been selected
   const { isMin } = getArgs();
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
       expandPanelZellij(4);
       expandPanelTMUX(4);
       setTimeout(() => {
-        console.clear();
+        //console.clear();
       }, 200);
     }
   }, [isMin]);
@@ -44,55 +44,28 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
   useInput((input, key) => {
     if (key.escape) {
       onClose();
-      contractPanelZellij(4);
-      contractPanelTMUX(4);
+      contractPanelZellij(3);
+      contractPanelTMUX(3);
     }
 
-    // Quick action shortcuts - only available on certain steps
-    if (step === "selectPair") {
-      if (input.toLowerCase() === "b") {
-        // Quick buy - set current pair, buy side, and go to amount entry
-        setSelectedPair(currentSymbol);
-        setOrderSide("buy");
-        setStep("enterAmount");
-        return;
-      }
-      
-      if (input.toLowerCase() === "s") {
-        // Quick sell - set current pair, sell side, and go to amount entry
-        setSelectedPair(currentSymbol);
-        setOrderSide("sell");
-        setStep("enterAmount");
-        return;
-      }
-      
-      if (input.toLowerCase() === "c" && hasPosition) {
-        // Quick close - only if there's a position to close
-        setSelectedPair(currentSymbol);
-        setStep("closePosition");
-        return;
-      }
-    }
-
-    if (step === "selectSide") {
-      if (input.toLowerCase() === "b") {
-        // Quick buy with already selected pair
-        setOrderSide("buy");
-        setStep("enterAmount");
-        return;
-      }
-      
-      if (input.toLowerCase() === "s") {
-        // Quick sell with already selected pair
-        setOrderSide("sell");
-        setStep("enterAmount");
-        return;
-      }
-      
-      if (input.toLowerCase() === "c" && hasPosition) {
-        // Close position with already selected pair - only if position exists
-        setStep("closePosition");
-        return;
+    if (pairSelected) {
+      if (step === "selectSide") {
+        if (input.toLowerCase() === "b") {
+          setOrderSide("buy");
+          setStep("enterAmount");
+          return;
+        }
+        
+        if (input.toLowerCase() === "s") {
+          setOrderSide("sell");
+          setStep("enterAmount");
+          return;
+        }
+        
+        if (input.toLowerCase() === "c" && hasPosition) {
+          setStep("closePosition");
+          return;
+        }
       }
     }
 
@@ -106,8 +79,8 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
 
     if (success && key.return) {
       onClose();
-      contractPanelZellij(6);
-      contractPanelTMUX(6);
+      contractPanelZellij(3);
+      contractPanelTMUX(3);
     }
   });
 
@@ -125,20 +98,16 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
       fetchSymbolInfo();
       fetchCurrentPrice();
       fetchBalance();
-      checkPosition(); // Check if there's a position for this pair
+      checkPosition();
     }
   }, [selectedPair, orderSide]);
 
   const checkPosition = async () => {
     try {
-      // Check if there's an open position for the selected pair
-      // This assumes you have a method to check positions in your exchange API
       const positions = await exchanges.kucoin.getPositions?.(selectedPair);
       const hasOpenPosition = positions && positions.length > 0 && 
         positions.some(pos => pos.size > 0 || pos.currentQty > 0);
       
-      // Alternatively, if you don't have a positions endpoint, 
-      // check if there's available balance of the base currency
       const baseCurrency = selectedPair.split("-")[0];
       const baseBalance = await exchanges.kucoin.getBalance(baseCurrency);
       
@@ -233,6 +202,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
 
   const handlePairSelect = (item) => {
     setSelectedPair(item.pair);
+    setPairSelected(true); // Mark that a pair has been selected
     setStep("selectSide");
   };
 
@@ -311,7 +281,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
         <SelectSide
           selectedPair={selectedPair}
           onSelect={handleSideSelect}
-          hasPosition={hasPosition} // Pass position status to SelectSide component
+          hasPosition={hasPosition} 
         />
       )}
 
@@ -339,11 +309,8 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
       <Box marginTop={1}>
         <Text dimColor>
           Press ESC to cancel
-          {step === "selectPair" && selectedPair && (
-            <Text> • B to quick buy • S to quick sell{hasPosition && " • C to close position"} (on selected pair)</Text>
-          )}
-          {step === "selectSide" && (
-            <Text> • B to quick buy • S to quick sell{hasPosition && " • C to close position"}</Text>
+          {step === "selectSide" && pairSelected && (
+            <Text> • B to buy • S to sell{hasPosition && " • C to close position"}</Text>
           )}
         </Text>
       </Box>

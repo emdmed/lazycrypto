@@ -68,7 +68,6 @@ const App = () => {
       }
       if (input === "t") {
         expandTerminal(3);
-        console.clear();
         setTimeout(() => {
           setIsTimeframeSelectorVisible(true);
         }, 200);
@@ -87,7 +86,7 @@ const App = () => {
     }
 
     if (key.escape) {
-      contractTerminal(6);
+      contractTerminal(3);
 
       if (isConfigPanelVisible) {
         setIsConfigPanelVisible(false);

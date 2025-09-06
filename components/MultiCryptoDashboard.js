@@ -19,8 +19,8 @@ const expandTerminal = (lines) => {
 };
 
 const contractTerminal = (lines) => {
-  contractPanelZellij(6);
-  contractPanelTMUX(6);
+  contractPanelZellij(3);
+  contractPanelTMUX(3);
 };
 
 const MultiCryptoDashboard = ({
@@ -42,8 +42,7 @@ const MultiCryptoDashboard = ({
 
   useInput((input, key) => {
     if (input.toLowerCase() === "s") {
-      expandTerminal(6);
-      console.clear();
+      expandTerminal(3);
       setTimeout(() => {
         setShowCryptoMenu(!showCryptoMenu);
       }, 200);
@@ -79,7 +78,7 @@ const MultiCryptoDashboard = ({
 
   const handleMenuSelect = (item) => {
     if (item.value === "done") {
-      contractTerminal(6);
+      contractTerminal(3);
       setShowCryptoMenu(false);
     } else {
       handleCryptoSelect(item);

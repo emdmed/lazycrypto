@@ -23,7 +23,7 @@ const ConfigPanel = ({
 
   useInput((input, key) => {
     if (key.escape) {
-      onCancel();
+      //onCancel();
       return;
     }
 
