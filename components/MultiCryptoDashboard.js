@@ -3,24 +3,36 @@ import { Box, Text, useInput } from "ink";
 import SelectInput from "ink-select-input";
 import CryptoData from "./CryptoData/CryptoData.js";
 import { getArgs } from "../utils/getArgs.js";
-import { expandPanelZellij, contractPanelZellij } from "./CryptoData/terminals/zellij.js";
-import { expandPanelTMUX, contractPanelTMUX } from "./CryptoData/terminals/tmux.js";
+import {
+  expandPanelZellij,
+  contractPanelZellij,
+} from "./CryptoData/terminals/zellij.js";
+import {
+  expandPanelTMUX,
+  contractPanelTMUX,
+} from "./CryptoData/terminals/tmux.js";
 import { cryptoOptions } from "../constants/cryptoOptions.js";
 
 const expandTerminal = (lines) => {
-  expandPanelZellij(lines)
-  expandPanelTMUX(lines)
-}
+  expandPanelZellij(lines);
+  expandPanelTMUX(lines);
+};
 
 const contractTerminal = (lines) => {
-  contractPanelZellij(6)
-  contractPanelTMUX(6)
-}
+  contractPanelZellij(3);
+  contractPanelTMUX(3);
+};
 
-const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
-  const [selectedCryptos, setSelectedCryptos] = useState(["bitcoin", "monero", "solana", "sui"]);
+const MultiCryptoDashboard = ({
+  onBack,
+  apiKey,
+  selectedTimeframe,
+  isTradesVisible,
+}) => {
+  const [selectedCryptos, setSelectedCryptos] = useState(["bitcoin", "monero"]);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showKeybinds, setShowKeyBinds] = useState(false);
 
   const { isMin } = getArgs();
 
@@ -29,16 +41,20 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
   }, []);
 
   useInput((input, key) => {
-    if (input === "s" || input === "S") {
-      expandTerminal(6)
-      console.clear()
+    if (input.toLowerCase() === "s") {
+      expandTerminal(3);
       setTimeout(() => {
         setShowCryptoMenu(!showCryptoMenu);
-      }, 200)
-    } else if (input === "r" || input === "R") {
+      }, 200);
+    } else if (input.toLocaleLowerCase() === "r") {
       setRefreshKey((prev) => prev + 1);
-    } else if (input === "q" || input === "Q" || (key.ctrl && input === "c")) {
+    } else if (
+      input.toLocaleLowerCase() === "q" ||
+      (key.ctrl && input === "c")
+    ) {
       process.exit(0);
+    } else if (input.toLocaleLowerCase() === "h") {
+      setShowKeyBinds((prev) => !prev);
     }
   });
 
@@ -62,7 +78,7 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
 
   const handleMenuSelect = (item) => {
     if (item.value === "done") {
-      contractTerminal(6)
+      contractTerminal(3);
       setShowCryptoMenu(false);
     } else {
       handleCryptoSelect(item);
@@ -109,9 +125,15 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
   }
 
   return (
-    <Box flexDirection="column">
+    <Box
+      flexDirection="column"
+      borderStyle={isMin ? null : "double"}
+      borderColor={isMin ? null : "cyan"}
+      paddingLeft={1}
+      paddingRight={1}
+    >
       {!isMin && (
-        <Box marginBottom={1} justifyContent="space-between">
+        <Box marginBottom={1} justifyContent="space-between" borderStyle="single" borderColor="cyan" borderTop={false} borderLeft={false} borderRight={false}>
           <Text bold color="cyan">
             LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh:
             15min
@@ -128,8 +150,11 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
               <CryptoData
                 crypto={cryptoId}
                 ticker={ticker}
-                apiKey={apiKey}ao
+                apiKey={apiKey}
                 selectedTimeframe={selectedTimeframe}
+                isTradesVisible={isTradesVisible}
+                totalCards={selectedCryptos?.length}
+                cardNumber={index + 1}
               />
             </Box>
           );
@@ -138,11 +163,15 @@ const MultiCryptoDashboard = ({ onBack, apiKey, selectedTimeframe }) => {
         <Text color="yellow">Loading cryptocurrencies...</Text>
       )}
 
-      <Box flexDirection="column">
-        <Text dimColor>
-          'S' cryptos | 'O' order | 'R' refresh | 'T' timeframe | 'C'
-          config
-        </Text>
+      <Box flexDirection="row" justifyContent="flex-end" >
+        {showKeybinds ? (
+          <Text dimColor>
+            'S' cryptos | 'O' order | 'R' refresh | 'T' timeframe | 'shift' +
+            't' toggle trades | 'C' config
+          </Text>
+        ) : (
+          <Text dimColor>'h' for help</Text>
+        )}
       </Box>
     </Box>
   );

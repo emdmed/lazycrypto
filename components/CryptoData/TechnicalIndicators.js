@@ -15,6 +15,9 @@ const RANGE_WIDTH = 16;
 const TechnicalIndicators = ({ indicators, data, historicalData }) => {
   const { isMin } = getArgs();
 
+  const currentPrice = historicalData[historicalData.length - 1]?.[4];
+  const prevPrice = historicalData[historicalData.length - 2]?.[4];
+  
   return (
     <Box
       width="100%"
@@ -40,11 +43,15 @@ const TechnicalIndicators = ({ indicators, data, historicalData }) => {
               {formatIndicatorValue(indicators.rsi, 0)}
             </Text>
           )}
-          <Box marginLeft={isMin ? 1 : 0} marginRight={1}>
-            <RowVisualizer
+          <Box marginLeft={isMin ? 1 : 0} marginRight={0}>
+            <RangeVisualizer
               width={isMin ? 10 : RANGE_WIDTH}
-              value={getLatestValue(indicators.rsi)}
-              prevValue={getPrevValue(indicators.rsi)}
+              price={getLatestValue(indicators.rsi)}
+              prevPrice={getPrevValue(indicators.rsi)}
+              upperBand={100}
+              middleBand={50}
+              lowerBand={0}
+              tag=""
             />
           </Box>
           {!isMin && (
@@ -70,19 +77,22 @@ const TechnicalIndicators = ({ indicators, data, historicalData }) => {
         <OtherIndicators
           indicators={indicators}
           data={data}
-          prevPrice={historicalData[historicalData.length - 2][1]}
+          prevPrice={prevPrice}
+          currentPrice={currentPrice}
         />
       </Box>
     </Box>
   );
 };
 
-const OtherIndicators = ({ indicators, data, prevData, prevPrice }) => {
-  const price = data.rate;
+const OtherIndicators = ({ indicators, data, prevData, prevPrice, currentPrice }) => {
+  const price = currentPrice;
   const { isMin } = getArgs();
 
-  const middle = ((getLatestValue(indicators.mmax) - getLatestValue(indicators.mmin)) / 2) + getLatestValue(indicators.mmin);
- 
+  const middle =
+    (getLatestValue(indicators.mmax) - getLatestValue(indicators.mmin)) / 2 +
+    getLatestValue(indicators.mmin);
+
   return (
     <Box
       flexDirection={isMin ? "row" : "column"}

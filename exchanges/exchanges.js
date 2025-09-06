@@ -4,7 +4,8 @@ const kucoinExchange = {
   placeOrder: kucoin.placeOrder,
   getBalance: kucoin.getAccountBalance,
   getPrice: kucoin.fetchCurrentPrice,
-  getSymbolParams: kucoin.getSymbolParams
+  getSymbolParams: kucoin.getSymbolParams,
+  getOrderDetailsById: kucoin.getOrderDetailsById
 }
 
 export const exchanges = {

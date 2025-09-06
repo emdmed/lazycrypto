@@ -22,7 +22,7 @@ export const setupZellijLayout = () => {
 
     execSync("zellij action move-focus up", { stdio: "ignore" });
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 3; i++) {
       execSync("zellij action resize -", { stdio: "ignore" });
     }
 

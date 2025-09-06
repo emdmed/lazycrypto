@@ -1,9 +1,10 @@
 import React from "react";
-import { Box } from "ink";
+import { Box, Text } from "ink";
 import CryptoHeader from "./CryptoHeader.js";
 import CryptoControls from "./CryptoControls.js";
 import TechnicalIndicators from "./TechnicalIndicators.js";
 import VolumeIndicators from "./VolumeIndicators.js";
+import CryptoOrders from "./CryptoOrders.js";
 
 const CryptoDisplay = ({
   data,
@@ -12,19 +13,37 @@ const CryptoDisplay = ({
   historicalLoading,
   indicators,
   onShowMenu,
+  isTradesVisible,
+  currentPrice,
+  prevPrice,
+  cardNumber,
+  totalCards
 }) => {
+
+
   return (
     <Box flexDirection="column">
       <Box
         width="100%"
         minWidth="100%"
-        borderStyle="round"
+        borderStyle="single"
         borderColor="cyan"
-        padding={1}
+        borderTop={false}
+        borderLeft={false}
+        borderRight={false}
+        borderBottom={cardNumber === totalCards ? false : true}
+        paddingBottom={1}
+        marginBottom={1}
         flexDirection="column"
       >
-        <CryptoHeader data={data} ticker={ticker} />
-        <Box width="100%" flexDirection="row" justifyContent="space-between" alignItems="center">
+        <CryptoHeader ticker={ticker} currentPrice={currentPrice} prevPrice={prevPrice} />
+
+        <Box
+          width="100%"
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
           {indicators && (
             <TechnicalIndicators
               indicators={indicators}
@@ -40,6 +59,7 @@ const CryptoDisplay = ({
           indicators={indicators}
           onShowMenu={onShowMenu}
         />
+        {isTradesVisible && <CryptoOrders ticker={ticker} historicalData={historicalData}/>}
       </Box>
     </Box>
   );

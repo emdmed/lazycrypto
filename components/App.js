@@ -5,7 +5,7 @@ import { Box, Text, useInput } from "ink";
 import MultiCryptoDashboard from "./MultiCryptoDashboard.js";
 import ConfigPanel from "./ConfigPanel.js";
 import TimeframeSelector from "./TimeframeSelector.js";
-import OrderPanel from "./OrderPanel.js";
+import OrderPanel from "./CryptoData/orderPanel/OrderPanel.js";
 import { readJsonFromFile } from "../utils/readJsonFile.js";
 import { writeJsonToFile } from "../utils/writeJsonFile.js";
 import os from "os";
@@ -32,6 +32,7 @@ const App = () => {
   const [isTimeframeSelectorVisible, setIsTimeframeSelectorVisible] =
     useState(false);
   const [isOrderPanelVisible, setIsOrderPanelVisible] = useState(false);
+  const [isTradesVisible, setIsTradesVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [apiKey, setApiKey] = useState("");
   const [apiSecret, setApiSecret] = useState("");
@@ -65,9 +66,8 @@ const App = () => {
           setIsConfigPanelVisible(true);
         }, 200);
       }
-      if (input.toLowerCase() === "t") {
+      if (input === "t") {
         expandTerminal(3);
-        console.clear();
         setTimeout(() => {
           setIsTimeframeSelectorVisible(true);
         }, 200);
@@ -79,10 +79,14 @@ const App = () => {
           setIsConfigPanelVisible(true);
         }
       }
+
+      if (input === "T") {
+        setIsTradesVisible((prev) => !prev);
+      }
     }
 
     if (key.escape) {
-      contractTerminal(6);
+      contractTerminal(3);
 
       if (isConfigPanelVisible) {
         setIsConfigPanelVisible(false);
@@ -114,9 +118,7 @@ const App = () => {
     try {
       const configData = await readJsonFromFile(filePath);
 
-      if (configData && configData.apiKey) {
-        setApiKey(configData.apiKey);
-
+      if (configData) {
         setApiSecret(configData.kucoinApiSecret || "");
         setApiPassphrase(configData.kucoinApiPassphrase || "");
         setConfigData(configData);
@@ -131,11 +133,9 @@ const App = () => {
 
         setIsLoading(false);
       } else {
-        setIsConfigPanelVisible(true);
         setIsLoading(false);
       }
     } catch (err) {
-      setIsConfigPanelVisible(true);
       setIsLoading(false);
     }
   };
@@ -280,9 +280,7 @@ const App = () => {
           <Text color="yellow">
             Press 'c' to configure API credentials with trading permissions
           </Text>
-          <Text color="gray" dimColor>
-            Press ESC to go back
-          </Text>
+          <Text dimColor>Press ESC to go back</Text>
         </Box>
       );
     }
@@ -294,18 +292,20 @@ const App = () => {
         apiPassphrase={apiPassphrase}
         onClose={handleOrderPanelClose}
         currentSymbol={currentSymbol}
+        selectedTimeframe={selectedTimeframe}
       />
     );
   }
 
   return (
-    <Box flexDirection="column" padding={isMin ? 0 : 1}>
+    <Box flexDirection="column">
       <MultiCryptoDashboard
         apiKey={apiKey}
         selectedTimeframe={selectedTimeframe}
         onBack={handleBack}
         onSymbolChange={handleSymbolChange}
         isMinified={isMin}
+        isTradesVisible={isTradesVisible}
       />
     </Box>
   );

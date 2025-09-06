@@ -19,6 +19,8 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
   const [historicalData, setHistoricalData] = useState([]);
   const [historicalLoading, setHistoricalLoading] = useState(false);
   const [indicators, setIndicators] = useState(null);
+  const [currentPrice, setCurrentPrice] = useState("");
+  const [prevPrice, setPrevPrice] = useState("");
 
   const getApiCode = (cryptoId) => {
     const cryptoInfo = cryptoOptions.find(
@@ -51,7 +53,9 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
 
       const kuCoinSymbol = getKuCoinSymbol(currentCrypto);
       const now = Math.floor(Date.now() / 1000);
-      const hoursAgo = now - (TIMEFRAMES_START_DATE_FACTOR[selectedTimeframe] || 102) * 60 * 60;
+      const hoursAgo =
+        now -
+        (TIMEFRAMES_START_DATE_FACTOR[selectedTimeframe] || 102) * 60 * 60;
 
       const klineResponse = await axios.get(
         "https://api.kucoin.com/api/v1/market/candles",
@@ -89,6 +93,8 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
 
       const sortedData = processedData.sort((a, b) => a[0] - b[0]);
 
+      setCurrentPrice(sortedData[sortedData.length - 1][4]);
+          setPrevPrice(sortedData[sortedData.length - 2][4]);
       setHistoricalData(sortedData);
 
       if (sortedData.length >= 101) {
@@ -119,33 +125,6 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
       try {
         setLoading(true);
         setError(null);
-
-        if (!apiKey) {
-          setError(
-            "Please set your LIVECOINWATCH_API_KEY environment variable",
-          );
-          return;
-        }
-
-        const apiCode = getApiCode(currentCrypto);
-
-        const response = await axios.post(
-          "https://api.livecoinwatch.com/coins/single",
-          {
-            currency: "USD",
-            code: apiCode,
-            meta: true,
-          },
-          {
-            headers: {
-              "content-type": "application/json",
-              "x-api-key": apiKey,
-            },
-          },
-        );
-
-        setData(response.data);
-
         await fetchHistoricalData();
       } catch (err) {
         if (err.response?.status === 401) {
@@ -168,7 +147,7 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
     fetchData();
     const interval = setInterval(fetchData, REFETCH_INTERVAL);
     return () => clearInterval(interval);
-  }, [currentCrypto, apiKey]);
+  }, [currentCrypto]);
 
   useEffect(() => {
     setData(null);
@@ -185,5 +164,7 @@ export const useCryptoData = (currentCrypto, apiKey, selectedTimeframe) => {
     historicalData,
     historicalLoading,
     indicators,
+    currentPrice,
+    prevPrice
   };
 };
