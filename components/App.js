@@ -134,11 +134,9 @@ const App = () => {
 
         setIsLoading(false);
       } else {
-        //setIsConfigPanelVisible(true);
         setIsLoading(false);
       }
     } catch (err) {
-      //setIsConfigPanelVisible(true);
       setIsLoading(false);
     }
   };

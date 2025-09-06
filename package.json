@@ -1,7 +1,7 @@
 
 {
   "name": "lazycrypto-cli",
-  "version": "0.1.10",
+  "version": "0.2.0",
   "description": "A simple CLI app to view cryptocurrency indicators",
   "type": "module",
   "main": "index.js",
@@ -37,7 +37,7 @@
     "terminal",
     "indicators"
   ],
-  "author": "Your Name",
+  "author": "A1GoKn8t",
   "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.25.9",
