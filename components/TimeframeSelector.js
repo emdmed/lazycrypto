@@ -12,7 +12,7 @@ const TimeframeSelector = ({ currentTimeframe, onSelect, onCancel }) => {
 
   const [selectedIndex, setSelectedIndex] = useState(() => {
     const index = timeframes.findIndex(tf => tf.value === currentTimeframe);
-    return index >= 0 ? index : 2; // Default to 1hour if not found
+    return index >= 0 ? index : 2; 
   });
 
   useInput((input, key) => {
