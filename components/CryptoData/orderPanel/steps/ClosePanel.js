@@ -31,7 +31,9 @@ const ClosePanel = ({
 
   const currentPrice = historicalData[historicalData.length - 1]?.[2];
 
-  const { orders, openOrders, isLoadingOrders } = useGetOrders({ pair: selectedPair });
+  const { orders, openOrders, isLoadingOrders } = useGetOrders({
+    pair: selectedPair,
+  });
 
   useInput((input, key) => {
     if (key.escape) {
@@ -55,19 +57,17 @@ const ClosePanel = ({
     }
   });
 
-  // Process orders when they are loaded from the hook
   useEffect(() => {
     if (!isLoadingOrders && openOrders) {
       processOrders(openOrders);
     }
   }, [openOrders, isLoadingOrders]);
-  
+
   const processOrders = (ordersData) => {
     try {
       setError("");
       setStep("loadingOrders");
 
-      // Filter only buy orders from the file data
       const buyOrders = ordersData.filter((order) => order.type === "buy");
 
       if (buyOrders.length === 0) {
@@ -76,7 +76,6 @@ const ClosePanel = ({
         return;
       }
 
-      // Format orders for display using the specified format
       const formattedOrders = buyOrders.map((order) => {
         const delta = currentPrice
           ? ((currentPrice - order.price) / order.price) * 100
@@ -126,7 +125,6 @@ const ClosePanel = ({
 
     const symbolInfo = await fetchSymbolInfo();
     try {
-
       const sellResult = await exchanges.kucoin.placeOrder(
         "sell",
         currentPrice,
@@ -135,9 +133,8 @@ const ClosePanel = ({
         selectedPair,
       );
 
-      
       const orderId = sellResult?.data?.orderId;
-      
+
       if (sellResult && sellResult.data && orderId) {
         const orderDetailsResponse =
           await exchanges.kucoin.getOrderDetailsById(orderId);
@@ -167,26 +164,23 @@ const ClosePanel = ({
 
   const calculatePnL = () => {
     if (!selectedOrder || !currentPrice) return null;
-  
+
     const buyPrice = parseFloat(selectedOrder.price);
     const quantity = parseFloat(selectedOrder.cryptoAmount);
-    
-    // What you originally paid (cost basis)
+
     const originalCost = quantity * buyPrice;
-    
-    // What you'll receive when selling (current value)
+
     const currentValue = quantity * currentPrice;
-    
-    // P&L is the difference
+
     const pnl = currentValue - originalCost;
     const pnlPercentage = ((currentPrice - buyPrice) / buyPrice) * 100;
-  
+
     return {
       pnl: pnl.toFixed(4),
       pnlPercentage: pnlPercentage.toFixed(2),
       isProfit: pnl > 0,
       originalCost: originalCost.toFixed(4),
-      currentValue: currentValue.toFixed(4)
+      currentValue: currentValue.toFixed(4),
     };
   };
 
@@ -274,7 +268,7 @@ const ClosePanel = ({
             <Text color="yellow">Select order to close at </Text>
             {currentPrice && (
               <Text inverse color="yellow">
-                {formatPrice(currentPrice)}
+                {` ${formatPrice(currentPrice)} `}
               </Text>
             )}
           </Box>
@@ -291,6 +285,9 @@ const ClosePanel = ({
 
                 const delta =
                   ((currentPrice - order.price) / order.price) * 100;
+                const priceDiff =
+                  currentPrice * order.cryptoAmount -
+                  order.price * order.cryptoAmount;
                 const color = delta > 0 ? "green" : "red";
 
                 return (
@@ -298,6 +295,7 @@ const ClosePanel = ({
                     <Text color={isSelected ? "cyan" : color}>
                       {order.cryptoAmount} at {formatPrice(order.price)}
                     </Text>
+                    <Text inverse> {formatPrice(priceDiff)} </Text>
                     <Text inverse color={color}>
                       {" "}
                       {delta.toFixed(2)}%{" "}

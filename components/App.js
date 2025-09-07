@@ -16,17 +16,7 @@ import { setupZellijLayout } from "./CryptoData/terminals/zellij.js";
 import { setupTmuxLayout } from "./CryptoData/terminals/tmux.js";
 import { useKeyBinds } from "../hooks/useKeybinds.js";
 import { useStdoutDimensions } from "../hooks/useStdoutDimensions.js";
-
-const useDebounced = (value, delay = 200) => {
-  const [debounced, setDebounced] = useState(value);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-
-  return debounced;
-};
+import { useDebounced } from "../hooks/useDebounced.js";
 
 const clearTerminal = () => {
   console.clear();
