@@ -1,6 +1,6 @@
 {
   "name": "lazycrypto-cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A simple CLI app to view cryptocurrency indicators",
   "type": "module",
   "main": "index.js",
