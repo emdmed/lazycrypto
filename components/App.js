@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import React, { useEffect, useState } from "react";
-import { Box, Text, useInput } from "ink";
+import { Box, Text, useInput, useApp } from "ink";
 import MultiCryptoDashboard from "./MultiCryptoDashboard.js";
 import ConfigPanel from "./ConfigPanel.js";
 import TimeframeSelector from "./TimeframeSelector.js";
@@ -12,16 +12,41 @@ import os from "os";
 import path from "path";
 import fs from "fs/promises";
 import { getArgs } from "../utils/getArgs.js";
-import {
-  setupZellijLayout,
-  expandPanelZellij,
-  contractPanelZellij,
-} from "./CryptoData/terminals/zellij.js";
-import {
-  contractPanelTMUX,
-  expandPanelTMUX,
-  setupTmuxLayout,
-} from "./CryptoData/terminals/tmux.js";
+import { setupZellijLayout } from "./CryptoData/terminals/zellij.js";
+import { setupTmuxLayout } from "./CryptoData/terminals/tmux.js";
+import { useKeyBinds } from "../hooks/useKeybinds.js";
+
+const useStdoutDimensions = () => {
+  const [dimensions, setDimensions] = useState([
+    process.stdout.columns || 80,
+    process.stdout.rows || 24,
+  ]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDimensions([process.stdout.columns || 80, process.stdout.rows || 24]);
+    };
+
+    process.stdout.on("resize", handleResize);
+
+    return () => {
+      process.stdout.off("resize", handleResize);
+    };
+  }, []);
+
+  return dimensions;
+};
+
+const useDebounced = (value, delay = 200) => {
+  const [debounced, setDebounced] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debounced;
+};
 
 const clearTerminal = () => {
   console.clear();
@@ -40,64 +65,31 @@ const App = () => {
   const [configData, setConfigData] = useState({});
   const [selectedTimeframe, setSelectedTimeframe] = useState("15min");
   const [currentSymbol, setCurrentSymbol] = useState("BTC-USDT");
+  const [showKeybinds, setShowKeyBinds] = useState(false);
+  const [showCryptoMenu, setShowCryptoMenu] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
+  const [rawColumns, rawRows] = useStdoutDimensions();
+  const columns = useDebounced(rawColumns, 150);
+  const rows = useDebounced(rawRows, 150);
+
+  const { exit } = useApp();
   const { isMin } = getArgs();
 
-  const expandTerminal = (lines) => {
-    expandPanelZellij(lines);
-    expandPanelTMUX(lines);
-  };
-
-  const contractTerminal = (lines) => {
-    contractPanelZellij(lines);
-    contractPanelTMUX(lines);
-  };
-
-  useInput((input, key) => {
-    if (
-      !isLoading &&
-      !isConfigPanelVisible &&
-      !isTimeframeSelectorVisible &&
-      !isOrderPanelVisible
-    ) {
-      if (input.toLowerCase() === "c") {
-        expandTerminal(3);
-        setTimeout(() => {
-          setIsConfigPanelVisible(true);
-        }, 200);
-      }
-      if (input === "t") {
-        expandTerminal(3);
-        setTimeout(() => {
-          setIsTimeframeSelectorVisible(true);
-        }, 200);
-      }
-      if (input.toLowerCase() === "o") {
-        if (apiSecret && apiPassphrase) {
-          setIsOrderPanelVisible(true);
-        } else {
-          setIsConfigPanelVisible(true);
-        }
-      }
-
-      if (input === "T") {
-        setIsTradesVisible((prev) => !prev);
-      }
-    }
-
-    if (key.escape) {
-      contractTerminal(3);
-
-      if (isConfigPanelVisible) {
-        setIsConfigPanelVisible(false);
-      }
-      if (isTimeframeSelectorVisible) {
-        setIsTimeframeSelectorVisible(false);
-      }
-      if (isOrderPanelVisible) {
-        setIsOrderPanelVisible(false);
-      }
-    }
+  useKeyBinds({
+    isLoading,
+    isConfigPanelVisible,
+    isTimeframeSelectorVisible,
+    isOrderPanelVisible,
+    apiSecret,
+    apiPassphrase,
+    setIsConfigPanelVisible,
+    setIsTradesVisible,
+    setIsTimeframeSelectorVisible,
+    setIsOrderPanelVisible,
+    setShowKeyBinds,
+    setShowCryptoMenu,
+    setRefreshKey
   });
 
   useEffect(() => {
@@ -222,7 +214,7 @@ const App = () => {
     if (apiKey) {
       setIsConfigPanelVisible(false);
     } else {
-      process.exit(0);
+      exit();
     }
   };
 
@@ -235,8 +227,17 @@ const App = () => {
   };
 
   const handleBack = () => {
-    process.exit(0);
+    exit();
   };
+
+  // Add simple resize protection
+  if (columns !== rawColumns || rows !== rawRows) {
+    return (
+      <Box justifyContent="center" alignItems="center" minHeight={10}>
+        <Text>⚡</Text>
+      </Box>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -298,7 +299,7 @@ const App = () => {
   }
 
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" width={columns} height={rows}>
       <MultiCryptoDashboard
         apiKey={apiKey}
         selectedTimeframe={selectedTimeframe}
@@ -306,7 +307,21 @@ const App = () => {
         onSymbolChange={handleSymbolChange}
         isMinified={isMin}
         isTradesVisible={isTradesVisible}
+        showCryptoMenu={showCryptoMenu}
+        setShowCryptoMenu={setShowCryptoMenu}
+        refreshKey={refreshKey}
+        setRefreshKey={setRefreshKey}
       />
+      <Box flexDirection="row" justifyContent="flex-end">
+        {showKeybinds ? (
+          <Text dimColor>
+            'S' cryptos | 'O' order | 'R' refresh | 'T' timeframe | 'shift' +
+            't' toggle trades | 'C' config
+          </Text>
+        ) : (
+          <Text dimColor>'h' for help</Text>
+        )}
+      </Box>
     </Box>
   );
 };

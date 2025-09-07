@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Text, useInput } from "ink";
+import { Box, Text } from "ink";
 import SelectInput from "ink-select-input";
 import CryptoData from "./CryptoData/CryptoData.js";
 import { getArgs } from "../utils/getArgs.js";
@@ -28,35 +28,17 @@ const MultiCryptoDashboard = ({
   apiKey,
   selectedTimeframe,
   isTradesVisible,
+  showCryptoMenu,
+  setShowCryptoMenu,
+  refreshKey
 }) => {
   const [selectedCryptos, setSelectedCryptos] = useState(["bitcoin", "monero"]);
-  const [showCryptoMenu, setShowCryptoMenu] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [showKeybinds, setShowKeyBinds] = useState(false);
 
   const { isMin } = getArgs();
 
   useEffect(() => {
     process.stdout.write("\x1B[2J\x1B[0f");
   }, []);
-
-  useInput((input, key) => {
-    if (input.toLowerCase() === "s") {
-      expandTerminal(3);
-      setTimeout(() => {
-        setShowCryptoMenu(!showCryptoMenu);
-      }, 200);
-    } else if (input.toLocaleLowerCase() === "r") {
-      setRefreshKey((prev) => prev + 1);
-    } else if (
-      input.toLocaleLowerCase() === "q" ||
-      (key.ctrl && input === "c")
-    ) {
-      process.exit(0);
-    } else if (input.toLocaleLowerCase() === "h") {
-      setShowKeyBinds((prev) => !prev);
-    }
-  });
 
   const handleCryptoSelect = (item) => {
     const cryptoId = item.value;
@@ -133,7 +115,15 @@ const MultiCryptoDashboard = ({
       paddingRight={1}
     >
       {!isMin && (
-        <Box marginBottom={1} justifyContent="space-between" borderStyle="single" borderColor="cyan" borderTop={false} borderLeft={false} borderRight={false}>
+        <Box
+          marginBottom={1}
+          justifyContent="space-between"
+          borderStyle="single"
+          borderColor="cyan"
+          borderTop={false}
+          borderLeft={false}
+          borderRight={false}
+        >
           <Text bold color="cyan">
             LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh:
             15min
@@ -163,7 +153,7 @@ const MultiCryptoDashboard = ({
         <Text color="yellow">Loading cryptocurrencies...</Text>
       )}
 
-      <Box flexDirection="row" justifyContent="flex-end" >
+      {/* <Box flexDirection="row" justifyContent="flex-end">
         {showKeybinds ? (
           <Text dimColor>
             'S' cryptos | 'O' order | 'R' refresh | 'T' timeframe | 'shift' +
@@ -172,7 +162,7 @@ const MultiCryptoDashboard = ({
         ) : (
           <Text dimColor>'h' for help</Text>
         )}
-      </Box>
+      </Box>*/}
     </Box>
   );
 };

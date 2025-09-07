@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useInput } from "ink";
 import { useCryptoData } from "../../hooks/useCryptoData.js";
 import { cryptoOptions } from "../../constants/cryptoOptions.js";
 import CryptoSelector from "./CryptoSelector.js";
