@@ -15,27 +15,7 @@ import { getArgs } from "../utils/getArgs.js";
 import { setupZellijLayout } from "./CryptoData/terminals/zellij.js";
 import { setupTmuxLayout } from "./CryptoData/terminals/tmux.js";
 import { useKeyBinds } from "../hooks/useKeybinds.js";
-
-const useStdoutDimensions = () => {
-  const [dimensions, setDimensions] = useState([
-    process.stdout.columns || 80,
-    process.stdout.rows || 24,
-  ]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setDimensions([process.stdout.columns || 80, process.stdout.rows || 24]);
-    };
-
-    process.stdout.on("resize", handleResize);
-
-    return () => {
-      process.stdout.off("resize", handleResize);
-    };
-  }, []);
-
-  return dimensions;
-};
+import { useStdoutDimensions } from "../hooks/useStdoutDimensions.js";
 
 const useDebounced = (value, delay = 200) => {
   const [debounced, setDebounced] = useState(value);
@@ -230,7 +210,6 @@ const App = () => {
     exit();
   };
 
-  // Add simple resize protection
   if (columns !== rawColumns || rows !== rawRows) {
     return (
       <Box justifyContent="center" alignItems="center" minHeight={10}>
