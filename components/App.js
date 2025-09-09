@@ -81,6 +81,7 @@ const App = () => {
       const configData = await readJsonFromFile(filePath);
 
       if (configData) {
+        setApiKey(configData.kucoinApiKey || "")
         setApiSecret(configData.kucoinApiSecret || "");
         setApiPassphrase(configData.kucoinApiPassphrase || "");
         setConfigData(configData);
