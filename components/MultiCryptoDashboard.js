@@ -101,7 +101,7 @@ const MultiCryptoDashboard = ({
   return (
     <Box
       flexDirection="column"
-      borderStyle={isMin ? null : "double"}
+      borderStyle={isMin ? null : "round"}
       borderColor={isMin ? null : "cyan"}
       paddingLeft={1}
       paddingRight={1}
@@ -128,7 +128,7 @@ const MultiCryptoDashboard = ({
         selectedCryptos.map((cryptoId, index) => {
           const ticker = getTickerForCrypto(cryptoId);
           return (
-            <Box key={`${cryptoId}-${index}`}>
+            <Box key={`${cryptoId}-${index}-${refreshKey}`}>
               <CryptoData
                 crypto={cryptoId}
                 ticker={ticker}
