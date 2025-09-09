@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import React, { useEffect, useState } from "react";
-import { Box, Text, useInput, useApp } from "ink";
+import { Box, Text, useApp } from "ink";
 import MultiCryptoDashboard from "./MultiCryptoDashboard.js";
 import ConfigPanel from "./ConfigPanel.js";
 import TimeframeSelector from "./TimeframeSelector.js";
@@ -127,7 +127,7 @@ const App = () => {
 
       await writeJsonToFile(newConfigData, filePath);
 
-      setApiKey(newConfigData.apiKey);
+      setApiKey(newConfigData.kucoinApiKey);
       setApiSecret(newConfigData.kucoinApiSecret || "");
       setApiPassphrase(newConfigData.kucoinApiPassphrase || "");
       setConfigData(newConfigData);
@@ -238,23 +238,6 @@ const App = () => {
   }
 
   if (isOrderPanelVisible) {
-    if (!apiSecret || !apiPassphrase) {
-      return (
-        <Box
-          flexDirection="column"
-          padding={1}
-          borderStyle="round"
-          borderColor="red"
-        >
-          <Text color="red">⚠ Trading credentials not configured</Text>
-          <Text color="yellow">
-            Press 'c' to configure API credentials with trading permissions
-          </Text>
-          <Text dimColor>Press ESC to go back</Text>
-        </Box>
-      );
-    }
-
     return (
       <OrderPanel
         apiKey={apiKey}

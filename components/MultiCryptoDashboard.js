@@ -4,27 +4,19 @@ import SelectInput from "ink-select-input";
 import CryptoData from "./CryptoData/CryptoData.js";
 import { getArgs } from "../utils/getArgs.js";
 import {
-  expandPanelZellij,
   contractPanelZellij,
 } from "./CryptoData/terminals/zellij.js";
 import {
-  expandPanelTMUX,
   contractPanelTMUX,
 } from "./CryptoData/terminals/tmux.js";
 import { cryptoOptions } from "../constants/cryptoOptions.js";
 
-const expandTerminal = (lines) => {
-  expandPanelZellij(lines);
-  expandPanelTMUX(lines);
-};
-
 const contractTerminal = (lines) => {
-  contractPanelZellij(3);
-  contractPanelTMUX(3);
+  contractPanelZellij(lines);
+  contractPanelTMUX(lines);
 };
 
 const MultiCryptoDashboard = ({
-  onBack,
   apiKey,
   selectedTimeframe,
   isTradesVisible,
@@ -44,7 +36,7 @@ const MultiCryptoDashboard = ({
     const cryptoId = item.value;
     if (selectedCryptos.includes(cryptoId)) {
       setSelectedCryptos((prev) => prev.filter((c) => c !== cryptoId));
-    } else if (selectedCryptos.length < 5) {
+    } else if (selectedCryptos.length < 25) {
       setSelectedCryptos((prev) => [...prev, cryptoId]);
     }
   };
@@ -60,7 +52,7 @@ const MultiCryptoDashboard = ({
 
   const handleMenuSelect = (item) => {
     if (item.value === "done") {
-      contractTerminal(3);
+      isMin && contractTerminal(3);
       setShowCryptoMenu(false);
     } else {
       handleCryptoSelect(item);
@@ -77,7 +69,7 @@ const MultiCryptoDashboard = ({
       <Box flexDirection="column">
         <Box marginBottom={1}>
           <Text bold color="cyan">
-            Select Cryptocurrencies ({selectedCryptos.length}/5 selected)
+            Select Cryptocurrencies ({selectedCryptos.length}/20 selected)
           </Text>
         </Box>
         <Text dimColor marginBottom={1}>
@@ -136,7 +128,7 @@ const MultiCryptoDashboard = ({
         selectedCryptos.map((cryptoId, index) => {
           const ticker = getTickerForCrypto(cryptoId);
           return (
-            <Box key={`${cryptoId}-${index}-${refreshKey}`}>
+            <Box key={`${cryptoId}-${index}`}>
               <CryptoData
                 crypto={cryptoId}
                 ticker={ticker}
@@ -153,16 +145,6 @@ const MultiCryptoDashboard = ({
         <Text color="yellow">Loading cryptocurrencies...</Text>
       )}
 
-      {/* <Box flexDirection="row" justifyContent="flex-end">
-        {showKeybinds ? (
-          <Text dimColor>
-            'S' cryptos | 'O' order | 'R' refresh | 'T' timeframe | 'shift' +
-            't' toggle trades | 'C' config
-          </Text>
-        ) : (
-          <Text dimColor>'h' for help</Text>
-        )}
-      </Box>*/}
     </Box>
   );
 };
