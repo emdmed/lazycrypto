@@ -13,7 +13,8 @@ export const useOrderpanelActions = ({
   setCurrentPrice,
   setHasPosition,
   setSymbolInfo,
-  hasPosition
+  hasPosition,
+  amount
 }) => {
   const handleAmountSubmit = () => {
     if (parseFloat(amount) > 0) {
@@ -49,6 +50,18 @@ export const useOrderpanelActions = ({
     try {
       const currency =
         orderSide === "buy" ? "USDT" : selectedPair.split("-")[0];
+
+      const balance = await exchanges.kucoin.getBalance(currency);
+      setAvailableBalance(balance || 0);
+    } catch (err) {
+      setError("Failed to fetch balance");
+      console.error("Balance error:", err);
+    }
+  };
+
+  const fetchUSDTBalance = async () => {
+    try {
+      const currency = "USDT"
 
       const balance = await exchanges.kucoin.getBalance(currency);
       setAvailableBalance(balance || 0);
@@ -106,6 +119,7 @@ export const useOrderpanelActions = ({
     fetchBalance,
     fetchCurrentPrice,
     checkPosition,
-    fetchSymbolInfo
+    fetchSymbolInfo,
+    fetchUSDTBalance
   }
 } 

@@ -43,6 +43,7 @@ const OrderPanel = ({
     handleSideSelect,
     handlePairSelect,
     fetchBalance,
+    fetchUSDTBalance,
     fetchCurrentPrice,
     fetchSymbolInfo,
     checkPosition
@@ -60,7 +61,8 @@ const OrderPanel = ({
     setCurrentPrice,
     setHasPosition,
     setSymbolInfo,
-    hasPosition
+    hasPosition,
+    amount
   })
 
   useEffect(() => {
@@ -126,7 +128,7 @@ const OrderPanel = ({
     if (selectedPair) {
       fetchSymbolInfo();
       fetchCurrentPrice();
-      fetchBalance();
+      orderSide === "buy" ? fetchUSDTBalance() : fetchBalance();
       checkPosition();
     }
   }, [selectedPair, orderSide]);
@@ -156,7 +158,7 @@ const OrderPanel = ({
         );
 
         setSuccess(
-          `Order placed successfully! Order ID: ${result.data.orderId}`,
+          `Order placed successfully!`,
         );
 
         saveOrder({

@@ -292,14 +292,15 @@ const ClosePanel = ({
 
                 return (
                   <Box gap={1}>
-                    <Text color={isSelected ? "cyan" : color}>
-                      {order.cryptoAmount} at {formatPrice(order.price)}
-                    </Text>
-                    <Text inverse> {formatPrice(priceDiff)} </Text>
                     <Text inverse color={color}>
                       {" "}
                       {delta.toFixed(2)}%{" "}
                     </Text>
+                    <Text inverse> {formatPrice(priceDiff)} </Text>
+                    <Text color={isSelected ? "cyan" : color}>
+                      {order.cryptoAmount} at {formatPrice(order.price)}
+                    </Text>
+
                   </Box>
                 );
               }}

@@ -23,7 +23,7 @@ const CryptoDisplayMini = ({
         padding={0}
         flexDirection="row"
       >
-        <Box width={25} flexDirection="row" justifyContent="space-between">
+        <Box width={25}>
           <Box flexDirection="row">
             <Text inverse >{ticker ? ` ${ticker} ` : ""}</Text>
           </Box>
@@ -44,6 +44,7 @@ const CryptoDisplayMini = ({
               historicalData={historicalData}
             />
           )}
+          {/* <VolumeIndicators historicalData={historicalData} />*/}
         </Box>
         <CryptoControls
           historicalLoading={historicalLoading}
