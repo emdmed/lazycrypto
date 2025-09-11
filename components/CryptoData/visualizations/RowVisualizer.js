@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, Text } from "ink";
 
 const RowVisualizer = ({
@@ -7,10 +7,10 @@ const RowVisualizer = ({
   factor = 10,
   width,
   baseColor = "grey",
-  marksColor = "white",
+  marksColor = "yellow",
   marks = [0, 5, 9],
   fill = false,
-  valueColor = "red",
+  valueColor = "yellow",
 }) => {
   const index = Math.abs(((value / factor) - 1).toFixed(0));
 
@@ -22,11 +22,11 @@ const RowVisualizer = ({
       return element;
     });
 
-  
-  if(index > 9 || index < 0 || isNaN(index)){
+
+  if (index > 9 || index < 0 || isNaN(index)) {
     return <Text color="red">Woops!</Text>
   }
-  
+
   if (index && base) {
     base[index].color = "red";
   }

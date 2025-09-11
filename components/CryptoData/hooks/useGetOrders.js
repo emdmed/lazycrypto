@@ -14,6 +14,8 @@ export const useGetOrders = ({ pair }) => {
   const fetchOrdersFromFile = async () => {
     setIsLoadingOrders(true);
     const orders = await readJsonFromFile(`${filePath}/${pair}.json`);
+
+    if (!orders || orders?.length === 0) return
     setOrders(orders);
     setOpenOrders(orders.filter(order => order.open === true))
     setIsLoadingOrders(false);

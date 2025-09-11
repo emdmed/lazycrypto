@@ -9,13 +9,13 @@ const RangeVisualizer = ({
   lowerBand,
   prevPrice,
   width = 30,
+  valueColor = "redBright",
   tag = "Range: ",
 }) => {
-  
+
   const { isMin } = getArgs();
 
-  const defaultConnectors = "─"
-  
+
   const setSymbol = () => {
     if (price > prevPrice) return `/`;
     return `\\`;
@@ -44,12 +44,12 @@ const RangeVisualizer = ({
     .map((_, index) => {
       const adjustedIndex = index + 1;
 
-      let symbol = price > prevPrice ? "/" : "\\" ;
+      let symbol = price > prevPrice ? "/" : "\\";
       let color = "gray";
 
       if (adjustedIndex === priceIndex) {
         symbol = setSymbol();
-        color = "cyan";
+        color = valueColor;
       } else if (adjustedIndex === middleIndex) {
         symbol = setSymbol();
         color = "white";
@@ -61,13 +61,13 @@ const RangeVisualizer = ({
   return (
     <Box flexDirection="row" marginRight={isMin ? 1 : 0}>
       {isMin && <Text dimColor>{`${tag} `}</Text>}
-      <Text color={price < lowerBand ? "cyan" : "white"}>{setSymbol()}</Text>
+      <Text color={price < lowerBand ? valueColor : "white"}>{setSymbol()}</Text>
       {visualization.map((item, index) => (
         <Text key={index} color={item.color}>
           {item.symbol}
         </Text>
       ))}
-      <Text color={price > upperBand ? "cyan" : "white"}>{setSymbol()}</Text>
+      <Text color={price > upperBand ? valueColor : "white"}>{setSymbol()}</Text>
       {!isMin && <Text dimColor>{` ${tag}`}</Text>}
     </Box>
   );

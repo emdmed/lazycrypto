@@ -6,7 +6,6 @@ import {
   getLatestValue,
   getPrevValue,
 } from "../../utils/indicatorUtils.js";
-import RowVisualizer from "./visualizations/RowVisualizer.js";
 import RangeVisualizer from "./visualizations/RangeVisualizer.js";
 import { getArgs } from "../../utils/getArgs.js";
 
@@ -17,7 +16,7 @@ const TechnicalIndicators = ({ indicators, data, historicalData }) => {
 
   const currentPrice = historicalData[historicalData.length - 1]?.[4];
   const prevPrice = historicalData[historicalData.length - 2]?.[4];
-  
+
   return (
     <Box
       width="100%"

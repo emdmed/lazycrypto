@@ -6,6 +6,7 @@ import { contractPanelTMUX, expandPanelTMUX } from "../terminals/tmux.js";
 import { getArgs } from "../../../utils/getArgs.js";
 import { cryptoOptions } from "../../../constants/cryptoOptions.js";
 import { saveOrder } from "./SaveOrder.js";
+import { useOrderpanelActions } from "../../../hooks/useOrderPanelActions.js";
 
 import SelectPair from "./steps/SelectPair.js";
 import SelectSide from "./steps/SelectSide.js";
@@ -15,7 +16,13 @@ import LoadingState from "./steps/LoadingState.js";
 import SuccessState from "./steps/SuccessState.js";
 import ClosePanel from "./steps/ClosePanel.js";
 
-const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimeframe }) => {
+const OrderPanel = ({
+  onClose,
+  currentSymbol = "BTC-USDT",
+  apiKey,
+  selectedTimeframe,
+  apiPassphrase
+}) => {
   const [step, setStep] = useState("selectPair");
   const [selectedPair, setSelectedPair] = useState(currentSymbol);
   const [orderSide, setOrderSide] = useState("buy");
@@ -28,16 +35,40 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
   const [currentPrice, setCurrentPrice] = useState(null);
   const [pairs, setPairs] = useState([]);
   const [hasPosition, setHasPosition] = useState(false);
-  const [pairSelected, setPairSelected] = useState(false); // Track if pair has been selected
+  const [pairSelected, setPairSelected] = useState(false);
   const { isMin } = getArgs();
+
+  const {
+    handleAmountSubmit,
+    handleSideSelect,
+    handlePairSelect,
+    fetchBalance,
+    fetchUSDTBalance,
+    fetchCurrentPrice,
+    fetchSymbolInfo,
+    checkPosition
+  } = useOrderpanelActions({
+    setError,
+    setStep,
+    setAvailableBalance,
+    setCurrentPrice,
+    setStep,
+    setOrderSide,
+    setSelectedPair,
+    setPairSelected,
+    availableBalance,
+    selectedPair,
+    setCurrentPrice,
+    setHasPosition,
+    setSymbolInfo,
+    hasPosition,
+    amount
+  })
 
   useEffect(() => {
     if (isMin) {
       expandPanelZellij(4);
       expandPanelTMUX(4);
-      setTimeout(() => {
-        //console.clear();
-      }, 200);
     }
   }, [isMin]);
 
@@ -55,13 +86,13 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
           setStep("enterAmount");
           return;
         }
-        
+
         if (input.toLowerCase() === "s") {
           setOrderSide("sell");
           setStep("enterAmount");
           return;
         }
-        
+
         if (input.toLowerCase() === "c" && hasPosition) {
           setStep("closePosition");
           return;
@@ -97,64 +128,10 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
     if (selectedPair) {
       fetchSymbolInfo();
       fetchCurrentPrice();
-      fetchBalance();
+      orderSide === "buy" ? fetchUSDTBalance() : fetchBalance();
       checkPosition();
     }
   }, [selectedPair, orderSide]);
-
-  const checkPosition = async () => {
-    try {
-      const positions = await exchanges.kucoin.getPositions?.(selectedPair);
-      const hasOpenPosition = positions && positions.length > 0 && 
-        positions.some(pos => pos.size > 0 || pos.currentQty > 0);
-      
-      const baseCurrency = selectedPair.split("-")[0];
-      const baseBalance = await exchanges.kucoin.getBalance(baseCurrency);
-      
-      setHasPosition(hasOpenPosition || (baseBalance && baseBalance > 0));
-    } catch (err) {
-      console.error("Error checking position:", err);
-      setHasPosition(false);
-    }
-  };
-
-  const fetchSymbolInfo = async () => {
-    try {
-      setError("");
-      const symbolParams = await exchanges.kucoin.getSymbolParams(selectedPair);
-      if (symbolParams) {
-        setSymbolInfo(symbolParams);
-      } else {
-        setError("Failed to fetch symbol information");
-      }
-    } catch (err) {
-      setError("Failed to fetch symbol information");
-      console.error("Symbol info error:", err);
-    }
-  };
-
-  const fetchCurrentPrice = async () => {
-    try {
-      const priceData = await exchanges.kucoin.getPrice(selectedPair);
-      const price = orderSide === "buy" ? priceData.bestAsk : priceData.bestBid;
-      setCurrentPrice(price);
-    } catch (err) {
-      setError("Failed to fetch current price");
-    }
-  };
-
-  const fetchBalance = async () => {
-    try {
-      const currency =
-        orderSide === "buy" ? "USDT" : selectedPair.split("-")[0];
-
-      const balance = await exchanges.kucoin.getBalance(currency);
-      setAvailableBalance(balance || 0);
-    } catch (err) {
-      setError("Failed to fetch balance");
-      console.error("Balance error:", err);
-    }
-  };
 
   const placeOrder = async () => {
     setIsLoading(true);
@@ -181,7 +158,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
         );
 
         setSuccess(
-          `Order placed successfully! Order ID: ${result.data.orderId}`,
+          `Order placed successfully!`,
         );
 
         saveOrder({
@@ -200,42 +177,29 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
     setIsLoading(false);
   };
 
-  const handlePairSelect = (item) => {
-    setSelectedPair(item.pair);
-    setPairSelected(true); // Mark that a pair has been selected
-    setStep("selectSide");
-  };
-
-  const handleSideSelect = (item) => {
-    if (item.value === "close") {
-      if (!hasPosition) {
-        setError("No position to close for this pair");
-        return;
-      }
-      setStep("closePosition");
-      return;
-    }
-    
-    setOrderSide(item.value);
-    setStep("enterAmount");
-  };
-
-  const handleAmountSubmit = () => {
-    if (parseFloat(amount) > 0) {
-      if (parseFloat(amount) > availableBalance) {
-        setError("Insufficient balance");
-        return;
-      }
-      setStep("confirm");
-    }
-  };
-
   if (isLoading) {
     return <LoadingState />;
   }
 
   if (success) {
     return <SuccessState message={success} />;
+  }
+
+  if (!apiKey || !apiPassphrase) {
+    return <Box
+      flexDirection="column"
+      padding={1}
+      borderStyle="round"
+      borderColor="red"
+    >
+      <Text color="red">⚠ Trading credentials not configured</Text>
+      <Text color="yellow">
+        Press 'c' to configure API credentials with trading permissions
+      </Text>
+      <Text dimColor>Press ESC to go back</Text>
+      <Text>{apiKey}</Text>
+      <Text>{apiPassphrase}</Text>
+    </Box>
   }
 
   if (step === "closePosition") {
@@ -281,7 +245,7 @@ const OrderPanel = ({ onClose, currentSymbol = "BTC-USDT", apiKey, selectedTimef
         <SelectSide
           selectedPair={selectedPair}
           onSelect={handleSideSelect}
-          hasPosition={hasPosition} 
+          hasPosition={hasPosition}
         />
       )}
 
