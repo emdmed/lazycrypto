@@ -10,6 +10,7 @@ import {
   contractPanelTMUX,
 } from "./CryptoData/terminals/tmux.js";
 import { cryptoOptions } from "../constants/cryptoOptions.js";
+import { usePersistSelectedCryptos } from "../hooks/usePersistSelectedCryptos.js";
 
 const contractTerminal = (lines) => {
   contractPanelZellij(lines);
@@ -24,9 +25,11 @@ const MultiCryptoDashboard = ({
   setShowCryptoMenu,
   refreshKey
 }) => {
-  const [selectedCryptos, setSelectedCryptos] = useState(["bitcoin", "monero"]);
+  //const [selectedCryptos, setSelectedCryptos] = useState(["bitcoin", "monero"]);
 
   const { isMin } = getArgs();
+
+  const { selectedCryptos, setSelectedCryptos } = usePersistSelectedCryptos()
 
   useEffect(() => {
     process.stdout.write("\x1B[2J\x1B[0f");
@@ -116,11 +119,18 @@ const MultiCryptoDashboard = ({
           borderLeft={false}
           borderRight={false}
         >
-          <Text bold color="cyan">
-            LazyCrypto Timeframe: {selectedTimeframe} | Periods: 20 | Refresh:
-            15min
-          </Text>
-          <Text dimColor>{new Date().toLocaleTimeString()}</Text>
+          <Box width="100%" gap="1" flexDirection="row" justifyContent="space-between">
+
+            <Box>
+              <Text bold color="cyan">LazyCrypto</Text>
+            </Box>
+            <Box>
+              <Text color="cyan">
+                Timeframe: {selectedTimeframe} | Periods: 20 | Refresh:
+                15min
+              </Text>
+            </Box>
+          </Box>
         </Box>
       )}
 
