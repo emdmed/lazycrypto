@@ -28,7 +28,7 @@ const EnterAmount = ({
 
         {availableBalance !== null && (
           <Text>
-            Available: {availableBalance.toFixed(4)}{" "}
+            Available: {availableBalance}{" "}
             {orderSide === "buy" ? "USDT" : selectedPair.split("-")[0]}
           </Text>
         )}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAppConfig } from "./useAppConfig.js";
+import { useAppConfig } from "../hooks/useAppConfig.js";
 import { readJsonFromFile } from "../../../utils/readJsonFile.js";
 import { exchanges } from "../../../exchanges/exchanges.js";
 
