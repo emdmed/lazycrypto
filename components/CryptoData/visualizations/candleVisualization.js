@@ -30,7 +30,6 @@ const CandleVisualizer = ({ historicalData }) => {
       const open = candle[1]
       const close = candle[4]
 
-
       const isCandleGreen = open < close
 
       const isHighestClose = index === highescloseIndex

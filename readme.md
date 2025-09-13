@@ -29,6 +29,10 @@ npx lazycrypto-cli@latest mini
 
 \ \ \ = going down
 
+## Experimental candle visualization
+
+c=lowest close C=highest close h=highest high B=highest close & high l=lowest low T=lowest low & close
+
 <img width="761" height="181" alt="image" src="https://github.com/user-attachments/assets/dc45248a-c619-4288-b6b2-68e9a43bb7fa" />
 
 ### 3. Buy/Sell
