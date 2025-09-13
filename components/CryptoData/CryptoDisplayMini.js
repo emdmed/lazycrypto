@@ -14,21 +14,22 @@ const CryptoDisplayMini = ({
   currentPrice,
   prevPrice
 }) => {
+
+  const isPriceUp = currentPrice > prevPrice
+
   return (
-    <Box flexDirection="row">
+    <Box flexDirection="row" width={75}>
       <Box
         alignItems="center"
-        width="100%"
-        minWidth="100%"
         padding={0}
         flexDirection="row"
       >
-        <Box width={25}>
+        <Box width={25} justifyContent="space-between" flexDirection="row">
           <Box flexDirection="row">
             <Text inverse >{ticker ? ` ${ticker} ` : ""}</Text>
           </Box>
-          <Box flexDirection="row" justifyContent="flex-end" marginRight={1}>
-            <Text color="yellow">{` ${formatPrice(currentPrice)} `}</Text>
+          <Box flexDirection="row" justifyContent="flex-end" marginRight={0}>
+            <Text color={isPriceUp ? "green" : "red"}>{` ${formatPrice(currentPrice)} `}</Text>
           </Box>
         </Box>
         <Box
@@ -44,7 +45,6 @@ const CryptoDisplayMini = ({
               historicalData={historicalData}
             />
           )}
-          {/* <VolumeIndicators historicalData={historicalData} />*/}
         </Box>
         <CryptoControls
           historicalLoading={historicalLoading}
