@@ -3,6 +3,7 @@ import { Box, Text } from "ink";
 import CryptoControls from "./CryptoControls.js";
 import TechnicalIndicators from "./TechnicalIndicators.js";
 import { formatPrice } from "../../utils/formatters/formatters.js";
+import CandleVisualizer from "./visualizations/candleVisualization.js";
 
 const CryptoDisplayMini = ({
   data,
@@ -18,7 +19,7 @@ const CryptoDisplayMini = ({
   const isPriceUp = currentPrice > prevPrice
 
   return (
-    <Box flexDirection="row" width={75}>
+    <Box flexDirection="row" width={105}>
       <Box
         alignItems="center"
         padding={0}
@@ -37,7 +38,9 @@ const CryptoDisplayMini = ({
           flexDirection="row"
           justifyContent="space-between"
           alignItems="center"
+          gap={1}
         >
+          <CandleVisualizer historicalData={historicalData} />
           {indicators && (
             <TechnicalIndicators
               indicators={indicators}
@@ -45,6 +48,7 @@ const CryptoDisplayMini = ({
               historicalData={historicalData}
             />
           )}
+
         </Box>
         <CryptoControls
           historicalLoading={historicalLoading}

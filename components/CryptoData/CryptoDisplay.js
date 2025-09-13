@@ -36,7 +36,7 @@ const CryptoDisplay = ({
         borderDimColor={true}
         flexDirection="column"
       >
-        <CryptoHeader ticker={ticker} currentPrice={currentPrice} prevPrice={prevPrice} />
+        <CryptoHeader historicalData={historicalData} ticker={ticker} currentPrice={currentPrice} prevPrice={prevPrice} />
 
         <Box
           width="100%"
