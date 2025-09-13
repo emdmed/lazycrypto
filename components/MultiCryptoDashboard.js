@@ -127,7 +127,7 @@ const MultiCryptoDashboard = ({
     >
       {!isMin && (
         <Box
-          marginBottom={1}
+          marginBottom={0}
           justifyContent="space-between"
           borderStyle="single"
           borderColor="cyan"
@@ -158,7 +158,7 @@ const MultiCryptoDashboard = ({
               return (
                 <Box
                   key={`${cryptoId}-${globalIndex}-${refreshKey}`}
-                // marginRight={cryptoIndex < row.length - 1 ? 1 : 0}
+                  marginRight={cryptoIndex < row.length - 1 ? 1 : 0}
                 >
                   <CryptoData
                     crypto={cryptoId}

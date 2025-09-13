@@ -266,6 +266,7 @@ const App = () => {
         setRefreshKey={setRefreshKey}
       />
       <Box flexDirection="row" justifyContent="flex-end">
+
         {showKeybinds ? (
           <Text dimColor>
             'S' cryptos | 'O' order | 'R' refresh | 'T' timeframe | 'shift' +
