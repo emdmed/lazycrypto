@@ -16,7 +16,9 @@ const CryptoData = ({
   selectedTimeframe,
   isTradesVisible,
   cardNumber,
-  totalCards
+  totalCards,
+  isLastRow,
+  cryptosPerRow
 }) => {
   const [currentCrypto, setCurrentCrypto] = useState(initialCrypto);
   const [currentTicker, setCurrentTicker] = useState(initialTicker);
@@ -62,7 +64,7 @@ const CryptoData = ({
     );
   }
 
-  if ( !currentPrice) return null;
+  if (!currentPrice) return null;
 
   if (isMin)
     return (
@@ -89,6 +91,8 @@ const CryptoData = ({
       isTradesVisible={isTradesVisible}
       cardNumber={cardNumber}
       totalCards={totalCards}
+      isLastRow={isLastRow}
+      cryptosPerRow={cryptosPerRow}
     />
   );
 };

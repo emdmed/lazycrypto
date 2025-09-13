@@ -11,6 +11,7 @@ import {
 } from "./CryptoData/terminals/tmux.js";
 import { cryptoOptions } from "../constants/cryptoOptions.js";
 import { usePersistSelectedCryptos } from "../hooks/usePersistSelectedCryptos.js";
+import { useStdoutDimensions } from "../hooks/useStdoutDimensions.js";
 
 const contractTerminal = (lines) => {
   contractPanelZellij(lines);
@@ -25,15 +26,27 @@ const MultiCryptoDashboard = ({
   setShowCryptoMenu,
   refreshKey
 }) => {
-  //const [selectedCryptos, setSelectedCryptos] = useState(["bitcoin", "monero"]);
-
   const { isMin } = getArgs();
-
-  const { selectedCryptos, setSelectedCryptos } = usePersistSelectedCryptos()
+  const { selectedCryptos, setSelectedCryptos } = usePersistSelectedCryptos();
+  const [terminalWidth] = useStdoutDimensions();
 
   useEffect(() => {
     process.stdout.write("\x1B[2J\x1B[0f");
   }, []);
+
+  const getCryptosPerRow = () => {
+    if (terminalWidth >= 180) return 3;
+    if (terminalWidth >= 120) return 2;
+    return 1;
+  };
+
+  const groupCryptosIntoRows = (cryptos, cryptosPerRow) => {
+    const rows = [];
+    for (let i = 0; i < cryptos.length; i += cryptosPerRow) {
+      rows.push(cryptos.slice(i, i + cryptosPerRow));
+    }
+    return rows;
+  };
 
   const handleCryptoSelect = (item) => {
     const cryptoId = item.value;
@@ -101,6 +114,9 @@ const MultiCryptoDashboard = ({
     );
   }
 
+  const cryptosPerRow = getCryptosPerRow();
+  const cryptoRows = groupCryptosIntoRows(selectedCryptos, cryptosPerRow);
+
   return (
     <Box
       flexDirection="column"
@@ -108,6 +124,7 @@ const MultiCryptoDashboard = ({
       borderColor={isMin ? "white" : "cyan"}
       paddingLeft={1}
       paddingRight={1}
+
     >
       {!isMin && (
         <Box
@@ -120,7 +137,6 @@ const MultiCryptoDashboard = ({
           borderRight={false}
         >
           <Box width="100%" gap="1" flexDirection="row" justifyContent="space-between">
-
             <Box>
               <Text bold color="cyan">LazyCrypto</Text>
             </Box>
@@ -133,24 +149,34 @@ const MultiCryptoDashboard = ({
           </Box>
         </Box>
       )}
-
       {selectedCryptos.length > 0 ? (
-        selectedCryptos.map((cryptoId, index) => {
-          const ticker = getTickerForCrypto(cryptoId);
-          return (
-            <Box key={`${cryptoId}-${index}-${refreshKey}`}>
-              <CryptoData
-                crypto={cryptoId}
-                ticker={ticker}
-                apiKey={apiKey}
-                selectedTimeframe={selectedTimeframe}
-                isTradesVisible={isTradesVisible}
-                totalCards={selectedCryptos?.length}
-                cardNumber={index + 1}
-              />
-            </Box>
-          );
-        })
+        cryptoRows.map((row, rowIndex) => (
+          <Box key={`row-${rowIndex}`}>
+
+            {row.map((cryptoId, cryptoIndex) => {
+              const ticker = getTickerForCrypto(cryptoId);
+              const globalIndex = rowIndex * cryptosPerRow + cryptoIndex;
+              return (
+                <Box
+                  key={`${cryptoId}-${globalIndex}-${refreshKey}`}
+                  marginRight={cryptoIndex < row.length - 1 ? 1 : 0}
+                >
+                  <CryptoData
+                    crypto={cryptoId}
+                    ticker={ticker}
+                    apiKey={apiKey}
+                    selectedTimeframe={selectedTimeframe}
+                    isTradesVisible={isTradesVisible}
+                    totalCards={selectedCryptos?.length}
+                    cardNumber={globalIndex + 1}
+                    isLastRow={(cryptoRows.length - 1) === rowIndex}
+                    cryptosPerRow={cryptosPerRow}
+                  />
+                </Box>
+              );
+            })}
+          </Box>
+        ))
       ) : (
         <Text color="yellow">Loading cryptocurrencies...</Text>
       )}

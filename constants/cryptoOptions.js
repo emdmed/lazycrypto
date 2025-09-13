@@ -5,7 +5,6 @@ export const cryptoOptions = [
   { label: 'Cardano (ADA)', value: 'cardano', ticker: 'ADA', apiCode: 'ADA' },
   { label: 'Solana (SOL)', value: 'solana', ticker: 'SOL', apiCode: 'SOL' },
   { label: 'Sui (SUI)', value: 'sui', ticker: 'SUI', apiCode: '_SUI' },
-  { label: 'Polygon (MATIC)', value: 'matic-network', ticker: 'MATIC', apiCode: 'MATIC' },
   { label: 'Chainlink (LINK)', value: 'chainlink', ticker: 'LINK', apiCode: 'LINK' },
   { label: 'Avalanche (AVAX)', value: 'avalanche-2', ticker: 'AVAX', apiCode: 'AVAX' },
   { label: 'Polkadot (DOT)', value: 'polkadot', ticker: 'DOT', apiCode: 'DOT' }
