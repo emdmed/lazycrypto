@@ -21,7 +21,7 @@ const CryptoDisplay = ({
 }) => {
 
   return (
-    <Box flexDirection="column" width={cryptosPerRow === 1 ? "100%" : 70}>
+    <Box marginTop={1} flexDirection="column" width={cryptosPerRow === 1 ? "100%" : 70}>
       <Box
         width="100%"
         minWidth="100%"
@@ -30,9 +30,8 @@ const CryptoDisplay = ({
         borderTop={false}
         borderLeft={false}
         borderRight={false}
-        borderBottom={isLastRow ? false : true}
+        borderBottom={!isLastRow}
         paddingBottom={1}
-        marginBottom={1}
         borderDimColor={true}
         flexDirection="column"
       >

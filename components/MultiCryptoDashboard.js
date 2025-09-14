@@ -128,7 +128,6 @@ const MultiCryptoDashboard = ({
     >
       {!isMin && (
         <Box
-          marginBottom={0}
           justifyContent="space-between"
           borderStyle="single"
           borderColor="cyan"
