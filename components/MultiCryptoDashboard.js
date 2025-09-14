@@ -35,8 +35,9 @@ const MultiCryptoDashboard = ({
   }, []);
 
   const getCryptosPerRow = () => {
-    if (terminalWidth >= 180) return 3;
-    if (terminalWidth >= 120) return 2;
+    if (terminalWidth >= 180 && !isMin) return 3;
+    if (terminalWidth >= 120 && !isMin) return 2;
+    if (terminalWidth >= 210 && isMin) return 2;
     return 1;
   };
 
