@@ -17,7 +17,7 @@ import { setupTmuxLayout } from "./CryptoData/terminals/tmux.js";
 import { useKeyBinds } from "../hooks/useKeybinds.js";
 import { useStdoutDimensions } from "../hooks/useStdoutDimensions.js";
 import { useDebounced } from "../hooks/useDebounced.js";
-
+import { fetchBitcoinPrice } from "./StringRender/fetchPrice.js"
 const clearTerminal = () => {
   console.clear();
 };
@@ -44,7 +44,7 @@ const App = () => {
   const rows = useDebounced(rawRows, 150);
 
   const { exit } = useApp();
-  const { isMin } = getArgs();
+  const { isMin, isString } = getArgs();
 
   useKeyBinds({
     isLoading,
@@ -200,6 +200,20 @@ const App = () => {
   const handleBack = () => {
     exit();
   };
+
+
+  if (isString) {
+    // Run the function
+    fetchBitcoinPrice("1hour")
+      .then(() => {
+        process.exit(0);
+      })
+      .catch((error) => {
+        console.log("Bitcoin Failed");
+        console.error(error);
+        process.exit(1);
+      });
+  }
 
   if (columns !== rawColumns || rows !== rawRows) {
     return (
