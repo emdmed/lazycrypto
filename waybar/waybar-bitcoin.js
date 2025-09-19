@@ -5,7 +5,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { fetchBitcoinPrice } from "./components/StringRender/fetchPrice.js";
+import { fetchBitcoinPrice } from "./fetchPrice.js";
 
 // Simple script just for waybar
 const main = async () => {

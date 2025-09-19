@@ -1,4 +1,5 @@
 import axios from "axios";
+import { formatPrice } from "../utils//formatters/formatters.js"
 
 const TIMEFRAMES_START_DATE_FACTOR = {
   "15min": 26,
@@ -101,19 +102,17 @@ export const fetchBitcoinPrice = async (selectedTimeframe = "1hour") => {
 
     // Calculate price change for display
     const priceChange = currentPrice - prevPrice;
-    const changeSymbol = priceChange >= 0 ? '▲' : '▼';
+    //const changeSymbol = priceChange >= 0 ? '▲' : '▼';
     const changePercent = ((priceChange / prevPrice) * 100).toFixed(2);
 
     // Format price nicely - shorter for waybar
-    const formattedPrice = currentPrice >= 1000
-      ? `$${(currentPrice / 1000).toFixed(1)}k`
-      : `$${currentPrice.toFixed(0)}`;
-
+    const formattedPrice = formatPrice(currentPrice)
     // Create candle visualization
     const candleChart = createCandleVisualization(sortedData);
 
     // Output with candle chart
-    console.log(`₿ ${formattedPrice} ${changeSymbol}${changePercent}% ${candleChart}`);
+    console.log(`₿ ${formattedPrice} ${changePercent}% ${candleChart}`);
+
 
   } catch (error) {
     if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
