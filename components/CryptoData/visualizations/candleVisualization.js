@@ -47,11 +47,11 @@ const CandleVisualizer = ({ historicalData }) => {
 
       if (isHighestClose) indicator = "C"
       if (ishighesHigh) indicator = "h"
-      if (isHighestClose && ishighesHigh) indicator = "B"
+      if (isHighestClose && ishighesHigh) indicator = "T"
 
       if (isLowestClose) indicator = "c"
       if (islowestLow) indicator = "l"
-      if (isLowestClose && islowestLow) indicator = "T"
+      if (isLowestClose && islowestLow) indicator = "B"
 
       return <Box flexDirection="column">
         <Text bold color={isCandleGreen ? "green" : "red"}>{indicator}</Text>
