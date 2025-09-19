@@ -8,6 +8,11 @@ const TIMEFRAMES_START_DATE_FACTOR = {
   "4hour": 408,
 };
 
+const COLORS = {
+  green: "#5bf584",
+  red: "#ff5959"
+}
+
 const getKuCoinSymbol = (cryptoId) => {
   if (cryptoId === "BTC") return "BTC-USDT";
   if (cryptoId === "ETH") return "ETH-USDT";
@@ -17,7 +22,7 @@ const getKuCoinSymbol = (cryptoId) => {
   return `${cryptoId}-USDT`;
 };
 
-const createCandleVisualization = (historicalData) => {
+const createCandleVisualization = (historicalData, useColor = false) => {
   const allCandles = historicalData.slice(-12); // Show last 12 candles
   const closes = allCandles.map(candle => candle[4]);
   const highs = allCandles.map(candle => candle[2]);
@@ -39,26 +44,54 @@ const createCandleVisualization = (historicalData) => {
     const isLowestLow = index === lowestLowIndex;
 
     let indicator = "|";
+    let color = "#94a3b8"; // Default slate gray
     const prevClose = allCandles[index - 1]?.[4];
 
-    if (prevClose && close > prevClose) indicator = "/";
-    if (prevClose && close < prevClose) indicator = "\\";
-    if (isHighestClose) indicator = "C";
-    if (isHighestHigh) indicator = "h";
-    if (isHighestClose && isHighestHigh) indicator = "B";
-    if (isLowestClose) indicator = "c";
-    if (isLowestLow) indicator = "l";
-    if (isLowestClose && isLowestLow) indicator = "T";
+    // Determine indicator and color based on price movement and significance
+    if (prevClose && close > prevClose) {
+      indicator = "/";
+      color = COLORS.green; // Green for upward movement
+    }
+    if (prevClose && close < prevClose) {
+      indicator = "\\";
+      color = COLORS.red; // Red for downward movement
+    }
 
-    visualization += indicator;
+    // Special indicators with single shade colors
+    if (isHighestClose) {
+      indicator = "C";
+      color = COLORS.green; // Green for highest close
+    }
+    if (isHighestHigh) {
+      indicator = "h";
+      color = COLORS.green; // Green for highest high
+    }
+    if (isHighestClose && isHighestHigh) {
+      indicator = "T";
+      color = COLORS.green; // Green for top (highest close + high)
+    }
+    if (isLowestClose) {
+      indicator = "c";
+      color = COLORS.red; // Red for lowest close
+    }
+    if (isLowestLow) {
+      indicator = "l";
+      color = COLORS.red; // Red for lowest low
+    }
+    if (isLowestClose && isLowestLow) {
+      indicator = "B";
+      color = COLORS.red; // Red for bottom (lowest close + low)
+    }
+
+    visualization += useColor ? `<span color="${color}">${indicator}</span>` : indicator;
   });
 
   return visualization;
 };
 
-export const fetchBitcoinPrice = async (selectedTimeframe = "1hour") => {
+export const fetchPrice = async ({ selectedTimeframe = "1hour", symbol = "BTC", color = false }) => {
   try {
-    const kuCoinSymbol = getKuCoinSymbol("BTC");
+    const kuCoinSymbol = getKuCoinSymbol(symbol);
     const now = Math.floor(Date.now() / 1000);
     const hoursAgo = now - (TIMEFRAMES_START_DATE_FACTOR[selectedTimeframe] || 102) * 60 * 60;
 
@@ -78,7 +111,7 @@ export const fetchBitcoinPrice = async (selectedTimeframe = "1hour") => {
     const klineData = klineResponse.data?.data || [];
 
     if (klineData.length === 0) {
-      console.log("Bitcoin No Data");
+      console.log(color ? '<span color="#ff6b6b">Bitcoin No Data</span>' : 'Bitcoin No Data');
       return;
     }
 
@@ -102,25 +135,45 @@ export const fetchBitcoinPrice = async (selectedTimeframe = "1hour") => {
 
     // Calculate price change for display
     const priceChange = currentPrice - prevPrice;
-    //const changeSymbol = priceChange >= 0 ? '▲' : '▼';
     const changePercent = ((priceChange / prevPrice) * 100).toFixed(2);
 
     // Format price nicely - shorter for waybar
-    const formattedPrice = formatPrice(currentPrice)
+    const formattedPrice = formatPrice(currentPrice);
+
     // Create candle visualization
-    const candleChart = createCandleVisualization(sortedData);
+    const candleChart = createCandleVisualization(sortedData, color);
 
-    // Output with candle chart
-    console.log(`₿ ${formattedPrice} ${changePercent}% ${candleChart}`);
+    if (color) {
+      // Color formatting based on price change
+      const priceColor = priceChange >= 0 ? COLORS.green : COLORS.red; // Green for up, red for down
+      const percentColor = priceChange >= 0 ? COLORS.green : COLORS.red; // Slightly different shades
 
+      // Output with colored markup
+      console.log(
+        `<span>${symbol}</span> ` +
+        `<span color="${priceColor}">${formattedPrice}</span> ` +
+        `<span color="${percentColor}">${changePercent}%</span> ` +
+        `${candleChart}`
+      );
+    } else {
+      // Output without colors
+      console.log(`${symbol} ${formattedPrice} ${changePercent}% ${candleChart}`);
+    }
 
   } catch (error) {
+    const errorMessages = {
+      'ENOTFOUND': color ? '<span color="#ff6b6b">₿ Connection Error</span>' : '₿ Connection Error',
+      'ECONNREFUSED': color ? '<span color="#ff6b6b">₿ Connection Error</span>' : '₿ Connection Error',
+      '429': color ? '<span color="#fbbf24">₿ Rate Limited</span>' : '₿ Rate Limited',
+      'default': color ? '<span color="#ff6b6b">₿ Error</span>' : '₿ Error'
+    };
+
     if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-      console.log("₿ Connection Error");
+      console.log(errorMessages['ENOTFOUND']);
     } else if (error.response?.status === 429) {
-      console.log("₿ Rate Limited");
+      console.log(errorMessages['429']);
     } else {
-      console.log("₿ Error");
+      console.log(errorMessages['default']);
     }
     // Don't log error details in waybar output
     process.stderr.write(`Bitcoin error: ${error.message}\n`);

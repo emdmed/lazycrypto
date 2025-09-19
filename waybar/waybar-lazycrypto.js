@@ -1,18 +1,17 @@
 #!/usr/bin/env node
 
-//waybar-bitcoin.js
-
 import dotenv from "dotenv";
 dotenv.config();
 
-import { fetchBitcoinPrice } from "./fetchPrice.js";
+import { fetchPrice } from "./fetchPrice.js";
+const symbol = process.argv[2]
+const color = process.argv[3]
 
-// Simple script just for waybar
 const main = async () => {
   try {
-    await fetchBitcoinPrice("1hour");
+    await fetchPrice({ selectedTimeframe: "1hour", symbol, color });
   } catch (error) {
-    console.log("₿ Failed");
+    console.log(symbol, "Failed");
     process.stderr.write(`Error: ${error.message}\n`);
   }
   process.exit(0);
