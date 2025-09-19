@@ -4,7 +4,7 @@ import SelectInput from "ink-select-input";
 import Spinner from "ink-spinner";
 import { exchanges } from "../../../../exchanges/exchanges.js";
 import { formatPrice } from "../../../../utils/formatters/formatters.js";
-import { useGetOrders } from "../../hooks/useGetOrders.js";
+import { useGetOrders } from "../../../../hooks//useGetOrders.js";
 import { useCryptoData } from "../../../../hooks/useCryptoData.js";
 import { saveOrder } from "../SaveOrder.js";
 

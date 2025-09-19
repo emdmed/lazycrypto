@@ -1,5 +1,5 @@
 import React from "react";
-import { useGetOrders } from "./hooks/useGetOrders.js";
+import { useGetOrders } from "../../hooks//useGetOrders.js";
 import { formatPrice } from "../../utils/formatters/formatters.js";
 import { Box, Text } from "ink";
 import Spinner from "ink-spinner";

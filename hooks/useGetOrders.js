@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppConfig } from "../hooks/useAppConfig.js";
-import { readJsonFromFile } from "../../../utils/readJsonFile.js";
-import { exchanges } from "../../../exchanges/exchanges.js";
+import { readJsonFromFile } from "../utils/readJsonFile.js";
+import { exchanges } from "../exchanges//exchanges.js";
 
 export const useGetOrders = ({ pair }) => {
   const [orders, setOrders] = useState();
