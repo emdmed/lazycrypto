@@ -1,11 +1,12 @@
 {
   "name": "lazycrypto-cli",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "A simple CLI app to view cryptocurrency indicators",
   "type": "module",
   "main": "index.js",
   "bin": {
-    "lazycrypto": "./dist/index.js"
+    "lazycrypto": "./dist/index.js",
+    "waybar-lazycrypto": "./waybar/waybar-lazycrypto.js"
   },
   "scripts": {
     "build": "babel . --out-dir dist --extensions .js,.jsx --ignore '**/node_modules/**,**/dist/**' && cp package.json dist/",
@@ -35,7 +36,8 @@
     "cryptocurrency",
     "cli",
     "terminal",
-    "indicators"
+    "indicators",
+    "waybar"
   ],
   "author": "A1GoKn8t",
   "license": "MIT",
