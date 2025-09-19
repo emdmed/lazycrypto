@@ -18,7 +18,7 @@ const parseArgs = () => {
   const colorIndex = args.indexOf('color');
   const color = colorIndex !== -1;
 
-  const timeframe = args.find(arg => arg !== 'color' && arg !== symbol) || '1day';
+  const timeframe = args.find(arg => arg !== 'color' && arg !== symbol) || '1hour';
 
   const validTimeframes = [
     '1min', '3min', '5min', '15min', '30min',
