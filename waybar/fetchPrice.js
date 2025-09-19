@@ -147,12 +147,13 @@ export const fetchPrice = async ({ selectedTimeframe = "1hour", symbol = "BTC", 
           text: `<span>${symbol}</span> ` +
             `<span color="${priceColor}">${formattedPrice}</span> ` +
             `<span color="${percentColor}">${changePercent}%</span> ` +
-            `${candleChart}`,
+            `${candleChart} ` +
+            `${selectedTimeframe}`,
           tooltip: "Candle Chart Legend:\nC = Highest close price\nc = Lowest close price\nh = Highest high price\nl = Lowest low price\nT = Highest close and high\nB = Lowest close and low"
         })
       );
     } else {
-      console.log(`${symbol} ${formattedPrice} ${changePercent}% ${candleChart}`);
+      console.log(`${symbol} ${formattedPrice} ${changePercent}% ${candleChart} ${selectedTimeframe}`);
     }
 
   } catch (error) {
