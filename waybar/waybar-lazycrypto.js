@@ -7,7 +7,7 @@ import { fetchPrice } from "./fetchPrice.js";
 const symbol = process.argv[2]
 const color = process.argv[3]
 
-const main = async () => {
+export const main = async () => {
   try {
     await fetchPrice({ selectedTimeframe: "1hour", symbol, color });
   } catch (error) {

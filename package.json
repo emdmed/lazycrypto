@@ -1,6 +1,6 @@
 {
   "name": "lazycrypto-cli",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "A simple CLI app to view cryptocurrency indicators",
   "type": "module",
   "main": "index.js",
@@ -9,9 +9,10 @@
     "waybar-lazycrypto": "./waybar/waybar-lazycrypto.js"
   },
   "scripts": {
-    "build": "babel . --out-dir dist --extensions .js,.jsx --ignore '**/node_modules/**,**/dist/**' && cp package.json dist/",
+    "build": "babel . --out-dir dist --extensions .js,.jsx --ignore '**/node_modules/**,**/dist/**,**/waybar/**' && cp package.json dist/",
     "start": "npm run build && node dist/index.js",
-    "dev": "babel . --out-dir dist --extensions .js,.jsx --ignore '**/node_modules/**,**/dist/**' --watch"
+    "waybar": "node waybar/waybar-lazycrypto.js",
+    "dev": "babel . --out-dir dist --extensions .js,.jsx --ignore '**/node_modules/**,**/dist/**,**/waybar/**' --watch"
   },
   "dependencies": {
     "axios": "^1.7.7",
