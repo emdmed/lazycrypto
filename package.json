@@ -1,11 +1,11 @@
 {
   "name": "lazycrypto-cli",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "A simple CLI app to view cryptocurrency indicators",
   "type": "module",
   "main": "index.js",
   "bin": {
-    "lazycrypto": "./dist/index.js",
+    "lazycrypto-cli": "./dist/index.js",
     "waybar-lazycrypto": "./waybar/waybar-lazycrypto.js"
   },
   "scripts": {
