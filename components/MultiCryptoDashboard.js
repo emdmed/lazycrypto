@@ -121,8 +121,6 @@ const MultiCryptoDashboard = ({
   return (
     <Box
       flexDirection="column"
-      borderStyle="round"
-      borderColor={isMin ? "white" : "cyan"}
       paddingLeft={1}
       paddingRight={1}
     >

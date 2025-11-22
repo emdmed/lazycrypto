@@ -17,6 +17,7 @@ import { setupTmuxLayout } from "./CryptoData/terminals/tmux.js";
 import { useKeyBinds } from "../hooks/useKeybinds.js";
 import { useStdoutDimensions } from "../hooks/useStdoutDimensions.js";
 import { useDebounced } from "../hooks/useDebounced.js";
+import {useScreenSize} from "../hooks/useScreenSize.js"
 
 const clearTerminal = () => {
   console.clear();
@@ -38,6 +39,8 @@ const App = () => {
   const [showKeybinds, setShowKeyBinds] = useState(false);
   const [showCryptoMenu, setShowCryptoMenu] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  const size = useScreenSize()
 
   const [rawColumns, rawRows] = useStdoutDimensions();
   const columns = useDebounced(rawColumns, 150);
@@ -252,7 +255,7 @@ const App = () => {
   }
 
   return (
-    <Box flexDirection="column" width={columns} height={rows}>
+    <Box borderStyle="round" borderColor="cyan" flexDirection="column" width={size.width} height={size.height}>
       <MultiCryptoDashboard
         apiKey={apiKey}
         selectedTimeframe={selectedTimeframe}
@@ -265,8 +268,7 @@ const App = () => {
         refreshKey={refreshKey}
         setRefreshKey={setRefreshKey}
       />
-      <Box flexDirection="row" justifyContent="flex-end">
-
+      <Box flexDirection="row" justifyContent="flex-end" paddingLeft={1} paddingRight={1}>
         {showKeybinds ? (
           <Text dimColor>
             'S' cryptos | 'O' order | 'R' refresh | 'T' timeframe | 'shift' +
