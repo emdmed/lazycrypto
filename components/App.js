@@ -113,7 +113,11 @@ const App = () => {
     try {
       await fs.mkdir(configDir, { recursive: true });
 
+      // Read existing config to preserve fields like selectedCryptos
+      const existingConfig = await readJsonFromFile(filePath) || {};
+
       const newConfigData = {
+        ...existingConfig,
         apiKey:
           typeof credentials === "string" ? credentials : credentials.apiKey,
 
@@ -125,7 +129,7 @@ const App = () => {
 
         timeframe: selectedTimeframe,
         currentSymbol: currentSymbol,
-        createdAt: configData.createdAt || new Date().toISOString(),
+        createdAt: existingConfig.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
 
@@ -267,6 +271,7 @@ const App = () => {
         setShowCryptoMenu={setShowCryptoMenu}
         refreshKey={refreshKey}
         setRefreshKey={setRefreshKey}
+        terminalWidth={columns}
       />
       <Box flexDirection="row" justifyContent="flex-end" paddingLeft={1} paddingRight={1}>
         {showKeybinds ? (

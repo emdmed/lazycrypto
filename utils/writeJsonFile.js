@@ -5,6 +5,9 @@ export const writeJsonToFile = async (data, filePath) => {
     const jsonData = JSON.stringify(data, null, 4);
 
     try {
+        // Ensure parent directory exists
+        await fs.mkdir(path.dirname(filePath), { recursive: true });
+
         await fs.unlink(filePath).catch((err) => {
             if (err.code !== 'ENOENT') throw err;
         });
